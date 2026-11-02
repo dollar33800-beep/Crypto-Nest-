@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CryptoNest — Pro Terminal</title>
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -27,7 +26,6 @@ button{cursor:pointer}
 .brand{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-0.5px;}
 .brand span{color:var(--blue)}
 .pill{font-size:12px;padding:6px 10px;border-radius:6px;background:#1e2329;color:var(--txt);font-weight:600;border:1px solid var(--line);}
-.profile-btn{width:32px;height:32px;border-radius:50%;background:#1e2329;display:flex;justify-content:center;align-items:center;border:1px solid var(--line);color:var(--txt);font-size:16px;cursor:pointer;}
 
 /* Nav Bar Bottom */
 .bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#0b0e14;
@@ -93,32 +91,45 @@ button{cursor:pointer}
 .pos-grid div span{display:block;font-size:10px;}
 .pos-grid div b{color:var(--txt);font-size:12px;}
 
-/* Assets / Wallet */
-.assets-card{margin:16px;background:linear-gradient(135deg, #1e3c72, #2a5298);border-radius:16px;padding:20px;color:#fff;box-shadow:0 10px 20px rgba(0,0,0,0.5);}
-.assets-label{font-size:13px;opacity:0.9;display:flex;align-items:center;justify-content:space-between}
-.assets-amt{font-size:32px;font-weight:800;margin:8px 0}
-.assets-sub{font-size:12px;opacity:0.9}
-.asset-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 16px}
-.a-btn{background:var(--card);border:1px solid var(--line);padding:14px 8px;border-radius:12px;text-align:center;font-size:12px;font-weight:600;color:var(--txt);cursor:pointer;transition:0.2s}
-.a-btn:active{transform:scale(0.95)}
-.a-btn svg{width:24px;height:24px;fill:var(--blue);margin-bottom:6px}
-.account-list{padding:0 16px;margin-bottom:20px;}
-.acc-item{background:var(--card);padding:16px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+/* Assets Page (Screenshot 1 Style) */
+.assets-page{padding:16px;}
+.bal-card{background:linear-gradient(135deg, #0d1b3e, #173475);border-radius:20px;padding:24px;position:relative;overflow:hidden;margin-bottom:20px;}
+.bal-card::after{content:'';position:absolute;right:-20px;bottom:-20px;width:180px;height:180px;background:radial-gradient(circle, rgba(41,98,255,0.4) 0%, transparent 70%);border-radius:50%;}
+.bal-title{font-size:14px;color:#a0b3e0;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.bal-amt{font-size:38px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-1px;}
+.bal-pnl{font-size:13px;color:var(--up);font-weight:600;}
+.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+.action-btn{background:#111827;border:1px solid #1f293d;padding:16px 8px;border-radius:16px;text-align:center;font-size:12px;font-weight:600;color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;transition:0.2s;}
+.action-btn:active{transform:scale(0.95);}
+.action-btn svg{width:24px;height:24px;fill:var(--blue);}
+.my-assets-title{font-size:18px;font-weight:700;margin-bottom:12px;color:#fff;}
+.asset-list{background:#0c111c;border-radius:16px;border:1px solid #1b2433;overflow:hidden;}
+.asset-item{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #1b2433;}
+.asset-item:last-child{border-bottom:none;}
+.asset-left{display:flex;align-items:center;gap:12px;}
+.asset-icon{width:36px;height:36px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:800;font-size:14px;color:#fff;}
+.asset-name{font-size:15px;font-weight:700;color:#fff;}
+.asset-full{font-size:12px;color:var(--muted);}
+.asset-right{text-align:right;}
+.asset-bal{font-size:15px;font-weight:700;color:#fff;}
+.asset-usd{font-size:12px;color:var(--muted);}
 
-/* Perpetual Page */
+/* Perpetual Page (Screenshot 2 Style) */
+.perp-tabs{display:flex;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted);}
+.perp-tabs div.active{color:#fff;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:10px;}
 .perp-header{display:flex;justify-content:space-between;padding:10px 16px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);}
 .perp-grid{display:grid;grid-template-columns:1.1fr 1fr;border-bottom:1px solid var(--line);}
 .perp-left{padding:12px;border-right:1px solid var(--line);}
 .perp-right{padding:0;overflow:hidden;}
-.ob-row{display:flex;justify-content:space-between;padding:3px 8px;font-size:10px;font-weight:600;}
+.ob-row{display:flex;justify-content:space-between;padding:4px 8px;font-size:10px;font-weight:600;}
 .ob-row.up{color:var(--up);}
 .ob-row.down{color:var(--down);}
 .ls-btn{display:flex;background:#1e2329;border-radius:6px;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);}
-.ls-btn div{flex:1;text-align:center;padding:10px;font-weight:700;font-size:13px;cursor:pointer;}
+.ls-btn div{flex:1;text-align:center;padding:10px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted);}
 .ls-btn .long.active{background:var(--up);color:#fff;}
 .ls-btn .short.active{background:var(--down);color:#fff;}
 .perc-btns{display:flex;gap:6px;margin:10px 0;}
-.perc-btns div{flex:1;text-align:center;padding:6px 0;background:#1e2329;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--line);}
+.perc-btns div{flex:1;text-align:center;padding:6px 0;background:#1e2329;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--line);color:var(--muted);}
 
 /* Modals */
 .modalBg{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:none;justify-content:center;align-items:flex-end;z-index:200}
@@ -133,6 +144,14 @@ button{cursor:pointer}
 .addr-box{background:#1e2329;border-radius:8px;padding:12px;margin-bottom:16px;word-break:break-all;font-family:monospace;font-size:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2b3139}
 .copy-btn{color:var(--gold);font-weight:700;font-size:11px;padding:4px 8px;background:rgba(252,213,53,0.1);border-radius:4px;cursor:pointer}
 .countdown{font-size:26px;font-weight:800;text-align:center;color:var(--gold);font-family:monospace;margin:10px 0;letter-spacing:2px;}
+
+/* Convert Box */
+.convert-box{background:#1e2329;padding:16px;border-radius:12px;margin-bottom:10px;}
+.convert-header{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.convert-input{display:flex;justify-content:space-between;align-items:center;}
+.convert-input input{font-size:20px;font-weight:700;color:#fff;width:100%;}
+.convert-select{background:#2b3139;padding:6px 10px;border-radius:8px;font-weight:700;font-size:14px;color:#fff;}
+.swap-icon{text-align:center;font-size:20px;color:var(--muted);margin:8px 0;cursor:pointer;}
 
 /* Referral UI */
 .ref-card{background:linear-gradient(135deg, #0f2027, #203a43, #2c5364);border-radius:12px;padding:16px;margin:16px;color:#fff;}
@@ -172,6 +191,7 @@ button{cursor:pointer}
 .chat-input-box input{flex:1;background:none;color:#fff;font-size:13px;}
 .chat-input-box button{color:var(--blue);font-weight:700;padding:0 10px;}
 .btn-wa{background:#229ED9;color:#fff;padding:10px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;display:block;text-decoration:none;margin-top:8px;}
+
 </style>
 </head>
 <body>
@@ -206,8 +226,6 @@ button{cursor:pointer}
     <div class="brand">Crypto<span>Nest</span></div>
     <div style="display:flex;gap:10px;align-items:center;">
       <div class="pill" id="userBalTop">0.00 USDT</div>
-      <div class="profile-btn" onclick="go('profile', document.querySelector('.navbtn[data-p=\'profile\']'))">👤</div>
-      <button onclick="logout()" style="color:var(--muted);font-size:18px;">↪</button>
     </div>
   </header>
 
@@ -218,7 +236,7 @@ button{cursor:pointer}
     <div class="market-list" id="homeMarkets"></div>
   </section>
 
-  <!-- TRADE -->
+  <!-- TRADE (Binary) -->
   <section id="trade" class="page">
     <div class="trade-header">
       <div style="display:flex;align-items:center;">
@@ -268,69 +286,100 @@ button{cursor:pointer}
     </div>
   </section>
 
-  <!-- ASSETS / WALLET -->
+  <!-- ASSETS (Updated UI) -->
   <section id="wallet" class="page">
-    <div class="assets-card">
-      <div class="assets-label"><span>Total Assets (USDT)</span> <span>👁</span></div>
-      <div class="assets-amt" id="walletBal">0.00</div>
-      <div class="assets-sub">Today's PnL: 0.00 USDT</div>
-    </div>
+    <div class="assets-page">
+      <!-- Balance Card -->
+      <div class="bal-card">
+        <div class="bal-title">Total Estimated Balance <span>👁</span></div>
+        <div class="bal-amt" id="walletBal">0.00 <span style="font-size:16px;color:#a0b3e0;">USDT</span></div>
+        <div class="bal-pnl">Today's PnL +0.00 USDT</div>
+      </div>
 
-    <div class="asset-actions">
-      <div class="a-btn" onclick="openModal('deposit')">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>Deposit
+      <!-- Actions -->
+      <div class="action-grid">
+        <div class="action-btn" onclick="openModal('deposit')">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>Deposit
+        </div>
+        <div class="action-btn" onclick="openModal('withdraw')">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" transform="rotate(180 12 12)"/></svg>Withdraw
+        </div>
+        <div class="action-btn" onclick="openModal('convert')">
+          <svg viewBox="0 0 24 24"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>Transfer
+        </div>
+        <div class="action-btn" onclick="go('history', document.querySelector('.navbtn[data-p=\'history\']'))">
+          <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>History
+        </div>
       </div>
-      <div class="a-btn" onclick="openModal('withdraw')">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" transform="rotate(180 12 12)"/></svg>Withdraw
-      </div>
-      <div class="a-btn" onclick="openModal('convert')">
-        <svg viewBox="0 0 24 24"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>Convert
-      </div>
-      <div class="a-btn" onclick="go('history', document.querySelector('.navbtn[data-p=\'history\']'))">
-        <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>History
+
+      <!-- My Assets List -->
+      <div class="my-assets-title">My Assets</div>
+      <div class="asset-list" id="assetListContainer">
+        <!-- Populated by JS -->
       </div>
     </div>
   </section>
 
-  <!-- PERPETUAL -->
+  <!-- PERPETUAL (Future) -->
   <section id="perpetual" class="page">
-    <div class="perp-header">
-      <span id="perpPair">BTC/USDT Perpetual</span>
-      <span>ℹ️</span>
+    <div class="perp-tabs">
+      <div>Spot</div>
+      <div class="active">USDT-M</div>
+      <div>COIN-M</div>
     </div>
+    
+    <div class="perp-header" style="padding:16px;">
+      <span style="font-size:18px;font-weight:800;color:#fff;">BTCUSDT <span style="font-size:12px;color:var(--muted);">Perp</span></span>
+      <span style="color:var(--down);font-weight:600;">-0.06%</span>
+    </div>
+
     <div class="perp-grid">
       <div class="perp-left">
+        <div style="display:flex;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;background:#1e2329;text-align:center;padding:8px;border-radius:6px;font-size:12px;">Cross</div>
+          <div style="flex:1;background:#1e2329;text-align:center;padding:8px;border-radius:6px;font-size:12px;">100x</div>
+        </div>
+
         <div class="ls-btn">
-          <div class="long active" onclick="setPerpDir('long', this)">Long</div>
-          <div class="short" onclick="setPerpDir('short', this)">Short</div>
+          <div class="long active" onclick="setPerpDir('long', this)">Buy</div>
+          <div class="short" onclick="setPerpDir('short', this)">Sell</div>
         </div>
-        <div style="font-size:12px;margin-bottom:8px;">Margin</div>
-        <div class="input-box" style="margin-bottom:8px;">
-          <span style="color:var(--txt);font-size:14px;font-weight:700;" id="perpPrice">0.00</span>
+
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;">
+          <span>Avbl</span><span style="color:#fff;" id="perpAvail">0.00 USDT</span>
         </div>
-        <div class="input-box" style="margin-bottom:8px;">
-          <input type="number" id="perpQty" placeholder="Quantity">
-          <span>USDT</span>
+
+        <div class="input-box" style="padding:8px 12px;margin-bottom:6px;">
+          <span style="font-size:12px;color:var(--muted);">Price (USDT)</span>
+          <input type="number" id="perpPriceInput" value="0.00" style="text-align:right;">
         </div>
+        
+        <div class="input-box" style="padding:8px 12px;margin-bottom:12px;">
+          <span style="font-size:12px;color:var(--muted);">Initial Margin</span>
+          <input type="number" id="perpQty" placeholder="0.00" style="text-align:right;">
+        </div>
+
         <div class="perc-btns">
           <div onclick="setPerpPct(25)">25%</div>
           <div onclick="setPerpPct(50)">50%</div>
           <div onclick="setPerpPct(75)">75%</div>
           <div onclick="setPerpPct(100)">100%</div>
         </div>
-        <div style="font-size:11px;margin-bottom:8px;">Avail: <b id="perpAvail">0.00</b> USDT</div>
-        
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
-          <span>Leverage</span><span id="levVal">20x</span>
+
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;">
+          <span>Max</span><span style="color:#fff;">249,993.93 USDT</span>
         </div>
-        <input type="range" id="levSlider" min="1" max="1000" value="20" oninput="$('levVal').textContent=this.value+'x'" style="width:100%;margin-bottom:12px;accent-color:var(--blue);">
-        
-        <button class="btn-buy" id="perpBtn" style="width:100%;padding:12px;font-size:14px;" onclick="placePerpTrade()">Buy Long</button>
+
+        <button class="btn-buy" id="perpBtn" style="width:100%;padding:14px;font-size:15px;border-radius:8px;" onclick="placePerpTrade()">Buy / Long</button>
       </div>
+
       <div class="perp-right" id="orderBook"></div>
     </div>
-    <div style="padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--line);">Positions</div>
-    <div id="perpPositions" style="padding:10px;color:var(--muted);font-size:12px;"></div>
+
+    <div style="padding:12px 16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--line);color:#fff;">Positions (0)</div>
+    <div id="perpPositions" style="padding:16px;color:var(--muted);font-size:12px;">
+      <div style="text-align:center;padding:20px;">No open positions</div>
+    </div>
   </section>
 
   <!-- HISTORY -->
@@ -366,9 +415,6 @@ button{cursor:pointer}
         <div class="ref-level-row"><span>Level 4</span><span style="color:var(--gold);">1%</span></div>
         <div class="ref-level-row"><span>Level 5</span><span style="color:var(--gold);">0.5%</span></div>
         <div class="ref-level-row"><span>Level 6</span><span style="color:var(--gold);">0.25%</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.4;">
-          When your referred friends deposit funds, you earn a commission based on the levels above. The commission is instantly added to your wallet.
-        </div>
       </div>
 
       <h2 style="font-size:18px;margin:20px 0 16px 0;">Account Settings</h2>
@@ -377,6 +423,11 @@ button{cursor:pointer}
       <div class="input-box"><input id="pMobile" placeholder="Mobile Number"></div>
       <div class="input-box"><input id="pEmail" disabled style="opacity:0.6;"></div>
       <button class="auth-btn" style="margin-top:10px;" onclick="saveProfile()">Save Changes</button>
+
+      <!-- Logout Button (Moved to Profile) -->
+      <button onclick="logout()" style="width:100%; background:rgba(246,70,93,0.1); color:var(--down); padding:14px; border-radius:10px; font-weight:700; font-size:15px; margin-top:20px; border:1px solid rgba(246,70,93,0.3);">
+        Log Out
+      </button>
     </div>
   </section>
 
@@ -415,6 +466,9 @@ button{cursor:pointer}
     </button>
     <button class="navbtn" onclick="go('wallet', this)" data-p="wallet">
       <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Assets
+    </button>
+    <button class="navbtn" onclick="go('profile', this)" data-p="profile">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Profile
     </button>
     <button class="navbtn hidden" id="navAdminBtn" onclick="go('admin', this)" data-p="admin">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>Admin
@@ -490,23 +544,28 @@ async function register(){
   btn.textContent = "Creating..."; btn.disabled = true;
 
   try {
-    const redirectUrl = window.location.origin + window.location.pathname;
     const { data, error } = await _supabase.auth.signUp({
-      email: e,
-      password: p,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: { full_name: n, mobile: m, referral_code: ref || null }
-      }
+      email: e, password: p,
+      options: { data: { full_name: n, mobile: m, referral_code: ref || null } }
     });
-
     if (error) throw error;
+    
+    await _supabase.from('profiles').insert([{
+      id: data.user.id, email: e, full_name: n, mobile: m, referral_code: ref || null
+    }]);
 
-    toast("Registration successful! Check email to verify.");
-    toggleAuth();
+    toast("Registration successful! Logging in...");
+    session = e; DB.sessionEmail = e; 
+    
+    let localUser = DB.users.find(u => u.email === e);
+    if(!localUser){
+       localUser = {uid:"CN"+Math.floor(100000+Math.random()*900000), name:n, email:e, mobile:m, balance:0, tx:[], trades:[], perp:[], refs:[], assets: {BTC: 0, ETH: 0, SOL: 0}};
+       DB.users.push(localUser);
+    }
+    saveDB(); 
+    setTimeout(()=>enter(), 1000);
   } catch (err) {
     toast(err.message || "Registration failed.");
-  } finally {
     btn.textContent = "Create Account"; btn.disabled = false;
   }
 }
@@ -515,19 +574,16 @@ async function signIn(){
   const e=$("le").value.trim(), p=$("lp").value;
   if(!e||!p) return toast("Enter credentials.");
   
-  // Admin Bypass
   if (e === ADMIN_EMAIL && p === "Captain@2007") {
     let adminUser = DB.users.find(u => u.email === e);
     if (!adminUser) {
-      adminUser = {uid:"ADMIN001",name:"Admin",nick:"Admin",email:e,mobile:"0000000000",pass:p,role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],joined:Date.now()};
+      adminUser = {uid:"ADMIN001",name:"Admin",nick:"Admin",email:e,mobile:"0000000000",pass:p,role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],assets: {BTC: 0, ETH: 0, SOL: 0}};
       DB.users.push(adminUser);
     }
     session = e; DB.sessionEmail = e; saveDB(); enter(); return;
   }
 
-  // Normal Login
-  const btn = $("loginBtn");
-  btn.textContent = "Logging in..."; btn.disabled = true;
+  const btn = $("loginBtn"); btn.textContent = "Logging in..."; btn.disabled = true;
 
   try {
     const { data, error } = await _supabase.auth.signInWithPassword({ email: e, password: p });
@@ -535,7 +591,7 @@ async function signIn(){
     
     let localUser = DB.users.find(u => u.email === e);
     if(!localUser){
-       localUser = {uid:"CN"+Math.floor(100000+Math.random()*900000), name:"User", email:e, balance:0, tx:[], trades:[], perp:[], refs:[]};
+       localUser = {uid:"CN"+Math.floor(100000+Math.random()*900000), name:data.user.user_metadata.full_name||"User", email:e, balance:0, tx:[], trades:[], perp:[], refs:[], assets: {BTC: 0, ETH: 0, SOL: 0}};
        DB.users.push(localUser);
     }
     session = e; DB.sessionEmail = e; saveDB(); enter();
@@ -553,16 +609,11 @@ async function logout(){
 }
 
 async function checkSession() {
-  if (window.location.hash.includes('access_token')) {
-    toast("Verification Successful! Redirecting...");
-    setTimeout(()=>{ window.location.hash = ''; enter(); }, 1500);
-    return;
-  }
   const { data: { session: sbSession } } = await _supabase.auth.getSession();
   if (sbSession) {
     session = sbSession.user.email;
     if(!DB.users.find(u=>u.email===session)){
-        DB.users.push({uid:"CN"+Math.floor(100000+Math.random()*900000), name:sbSession.user.user_metadata.full_name||"User", email:session, balance:0, tx:[], trades:[], perp:[], refs:[]});
+        DB.users.push({uid:"CN"+Math.floor(100000+Math.random()*900000), name:sbSession.user.user_metadata.full_name||"User", email:session, balance:0, tx:[], trades:[], perp:[], refs:[], assets: {BTC: 0, ETH: 0, SOL: 0}});
         saveDB();
     }
     enter();
@@ -589,7 +640,7 @@ function go(id, btn){
   
   if(id==="trade"){ setTimeout(()=>{ loadChart(); }, 50); }
   if(id==="home") renderMarkets();
-  if(id==="wallet") renderWallet();
+  if(id==="wallet") renderAssetsPage();
   if(id==="history") renderHistory();
   if(id==="admin") renderAdmin();
   if(id==="perpetual") renderPerp();
@@ -600,9 +651,7 @@ function go(id, btn){
 function renderAll(){
   const u = me(); if(!u.email) return;
   $("userBalTop").textContent = (u.balance||0).toFixed(2) + " USDT";
-  $("walletBal").textContent = (u.balance||0).toFixed(2);
-  $("perpAvail").textContent = (u.balance||0).toFixed(2);
-  renderMarkets(); renderHistory(); renderWallet(); renderAdmin(); renderTradeList();
+  renderMarkets(); renderHistory(); renderAssetsPage(); renderAdmin(); renderTradeList();
 }
 
 function genSparkline(up){
@@ -619,7 +668,7 @@ function renderMarkets(){
 
   const html = SYMBOLS.map(s=>{
     const d = ticker[s];
-    const pc = d ? +d.priceChangePercent : (Math.random()*4-2);
+    const pc = d ? +d.priceChangePercent : 0;
     const cls = pc >= 0 ? "bg-up" : "bg-down";
     const sign = pc >= 0 ? "+" : "";
     return `<div class="m-row" onclick="openTrade('${s}')">
@@ -633,9 +682,50 @@ function renderMarkets(){
   $("homeMarkets").innerHTML = html;
 }
 
-function renderWallet(){
+// Renders the New Assets Page
+function renderAssetsPage(){
   const u = me(); if(!u.email) return;
-  $("walletBal").textContent = (u.balance||0).toFixed(2);
+  
+  // Update Bal Card
+  if($("walletBal")) $("walletBal").innerHTML = (u.balance||0).toFixed(2) + ` <span style="font-size:16px;color:#a0b3e0;">USDT</span>`;
+  
+  // Update Asset List
+  const assets = u.assets || {BTC: 0, ETH: 0, SOL: 0};
+  let html = "";
+  
+  // USDT
+  html += `<div class="asset-item">
+    <div class="asset-left">
+      <div class="asset-icon" style="background:#26a17b;">₮</div>
+      <div><div class="asset-name">USDT</div><div class="asset-full">Tether USDT</div></div>
+    </div>
+    <div class="asset-right">
+      <div class="asset-bal">${(u.balance||0).toFixed(2)}</div>
+      <div class="asset-usd">≈ $${(u.balance||0).toFixed(2)}</div>
+    </div>
+  </div>`;
+
+  // Other Coins
+  const coinData = { BTC: {n: "Bitcoin", c: "#f7931a", i: "₿"}, ETH: {n: "Ethereum", c: "#627eea", i: "Ξ"}, SOL: {n: "Solana", c: "#14f195", i: "S"} };
+  
+  for (let sym in assets) {
+    const bal = assets[sym];
+    const price = ticker[sym + "USDT"]?.lastPrice || 0;
+    const usdVal = bal * price;
+    const data = coinData[sym] || {n: sym, c: "#333", i: sym[0]};
+    
+    html += `<div class="asset-item" onclick="openConvertModal('${sym}')">
+      <div class="asset-left">
+        <div class="asset-icon" style="background:${data.c};">${data.i}</div>
+        <div><div class="asset-name">${sym}</div><div class="asset-full">${data.n}</div></div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-bal">${bal.toFixed(4)}</div>
+        <div class="asset-usd">≈ $${usdFormatted}</div>
+      </div>
+    </div>`;
+  }
+  if($("assetListContainer")) $("assetListContainer").innerHTML = html;
 }
 
 function renderHistory(){
@@ -715,7 +805,6 @@ function openTrade(sym){
 function changeCoin(sym){
   coin = sym;
   $("tradePair").textContent = sym.replace("USDT","/USDT");
-  $("perpPair").textContent = sym.replace("USDT","/USDT") + " Perpetual";
   loadChart(); startPerpWS();
 }
 
@@ -885,7 +974,7 @@ function checkTrades(){
   (u.trades||[]).forEach(t=>{
     if(t.status==="Open" && Date.now() >= t.closeAt){
       t.status = "Completed";
-      const win = Math.random() < 0.5; // Simulated win/loss
+      const win = Math.random() < 0.5;
       if(win){ u.balance += t.amount * 1.85; t.profit = t.amount * 0.85; }
       else{ t.profit = -t.amount; }
       u.tx.unshift({type:"Trade "+(win?"Win":"Loss"), amount:t.profit, status:"Completed", date:new Date().toLocaleString(), time:Date.now()});
@@ -900,7 +989,7 @@ function setPerpDir(dir, el){
   perpDir = dir;
   document.querySelectorAll('.ls-btn div').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
-  $("perpBtn").textContent = dir === 'long' ? 'Buy Long' : 'Sell Short';
+  $("perpBtn").textContent = dir === 'long' ? 'Buy / Long' : 'Sell / Short';
   $("perpBtn").className = dir === 'long' ? 'btn-buy' : 'btn-sell';
 }
 
@@ -913,7 +1002,7 @@ function setPerpPct(pct){
 function placePerpTrade(){
   const u = me();
   const amt = +$("perpQty").value;
-  const lev = +$("levSlider").value;
+  const lev = 100;
   if(!amt || amt <= 0) return toast("Enter amount");
   if(amt > u.balance) return toast("Insufficient balance");
   
@@ -939,7 +1028,7 @@ function startPerpWS(){
         if(msg.asks[i]) obHtml += `<div class="ob-row up"><span>${fmt(msg.asks[i][0])}</span><span>${fmt(msg.asks[i][1])}</span></div>`;
       }
       const mid = (parseFloat(msg.bids[0][0]) + parseFloat(msg.asks[0][0])) / 2;
-      obHtml += `<div class="ob-row" style="padding:5px 8px;font-size:12px;color:var(--down);font-weight:800;background:#1e2329;">${fmt(mid)}</div>`;
+      obHtml += `<div class="ob-row" style="padding:8px;font-size:16px;color:var(--up);font-weight:800;background:#1e2329;">${fmt(mid)}</div>`;
       for(let i=0; i<5; i++) {
         if(msg.bids[i]) obHtml += `<div class="ob-row down"><span>${fmt(msg.bids[i][0])}</span><span>${fmt(msg.bids[i][1])}</span></div>`;
       }
@@ -950,8 +1039,8 @@ function startPerpWS(){
 
 function renderPerp(){
   const u = me(); if(!u.email) return;
-  $("perpAvail").textContent = u.balance.toFixed(2);
-  $("perpPair").textContent = coin.replace("USDT","") + "/USDT Perpetual";
+  $("perpAvail").textContent = u.balance.toFixed(2) + " USDT";
+  if($("perpPriceInput")) $("perpPriceInput").value = fmt(ticker[coin]?.lastPrice || 0);
   startPerpWS();
 
   $("perpPositions").innerHTML = (u.perp||[]).map(p=>`
@@ -969,7 +1058,7 @@ function renderPerp(){
 function openModal(type){
   if(type === 'deposit') openDepositStep1();
   if(type === 'withdraw') openWithdraw();
-  if(type === 'convert') openConvert();
+  if(type === 'convert') openConvertModal();
 }
 
 function openDepositStep1(){
@@ -1018,11 +1107,14 @@ function openDepositStep2(){
   }, 1000);
 }
 
-function submitDeposit(amt, net){
+async function submitDeposit(amt, net){
   const u = me();
-  u.depsReq = u.depsReq || [];
-  u.depsReq.unshift({ id:"DEP"+Date.now().toString().slice(-6), amount:amt, network:net, status:"Pending", created:Date.now() });
-  saveDB(); closeModal(); renderAdmin();
+  const { error } = await _supabase.from('transactions').insert([{
+    user_email: u.email, type: 'deposit', amount: amt, network: net, status: 'Pending'
+  }]);
+  if(error) return toast("Error: " + error.message);
+  
+  closeModal(); renderAdmin();
   toast("Deposit request submitted.");
 }
 
@@ -1045,128 +1137,191 @@ function openWithdraw(){
   $("modalBg").classList.add("on");
 }
 
-function submitWithdraw(){
+async function submitWithdraw(){
   const amt = +$("wdAmt").value, net = $("wdNet").value, addr = $("wdAddr").value.trim();
   const u = me();
   if(!amt || amt<=0 || !addr) return toast("Fill all fields.");
   if(amt > u.balance) return toast("Insufficient balance.");
-  u.balance -= amt;
-  u.wdsReq = u.wdsReq || [];
-  u.wdsReq.unshift({ id:"WD"+Date.now().toString().slice(-6), amount:amt, network:net, address:addr, status:"Pending", created:Date.now() });
-  saveDB(); closeModal(); renderAll();
-  toast("Withdrawal requested.");
+  
+  u.balance -= amt; saveDB(); renderAll();
+  
+  const { error } = await _supabase.from('transactions').insert([{
+    user_email: u.email, type: 'withdraw', amount: amt, network: net, address: addr, status: 'Pending'
+  }]);
+  if(error) { u.balance += amt; saveDB(); return toast("Error: " + error.message); }
+  
+  closeModal(); renderAdmin(); toast("Withdrawal requested.");
 }
 
-function openConvert(){
+/* ================= CONVERT (Transfer) ================= */
+let convertDir = 'buy'; // buy = USDT to Coin, sell = Coin to USDT
+let currentConvCoin = 'BTC';
+
+function openConvertModal(preCoin){
+  if(preCoin) currentConvCoin = preCoin;
+  
   const html = `
-    <div class="modal-title">Convert <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div style="background:#1e2329;padding:16px;border-radius:12px;margin-bottom:10px;">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">From (USDT)</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-weight:700;font-size:16px;">USDT</div>
-        <input type="number" id="cvAmt" placeholder="Min $10" style="font-size:20px;font-weight:700;text-align:right;background:none;color:#fff;width:120px;" oninput="calcConvert()">
+    <div class="modal-title">Transfer / Convert <span class="close-btn" onclick="closeModal()">×</span></div>
+    
+    <div class="convert-box">
+      <div class="convert-header"><span>From</span><span id="convFromBal">Bal: 0.00</span></div>
+      <div class="convert-input">
+        <input type="number" id="convAmt" placeholder="0.00" oninput="calcConvertModal()">
+        <div class="convert-select" id="convFromSym">USDT</div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;">Available: ${me().balance.toFixed(2)} USDT</div>
     </div>
-    <div style="text-align:center;font-size:20px;color:var(--muted);margin:8px 0;">↓</div>
-    <div style="background:#1e2329;padding:16px;border-radius:12px;margin-bottom:10px;">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">To</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <select id="cvCoin" style="font-weight:700;font-size:16px;background:none;color:#fff;" onchange="calcConvert()">
-          <option value="BTCUSDT">BTC</option>
-          <option value="ETHUSDT">ETH</option>
-          <option value="SOLUSDT">SOL</option>
+    
+    <div class="swap-icon" onclick="swapConvertDir()">⇅</div>
+    
+    <div class="convert-box">
+      <div class="convert-header"><span>To</span><span id="convToBal">Bal: 0.00</span></div>
+      <div class="convert-input">
+        <input type="number" id="convGet" placeholder="0.00" readonly style="color:var(--muted);">
+        <select class="convert-select" id="convToSym" onchange="currentConvCoin=this.value; calcConvertModal()">
+          <option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option>
         </select>
-        <div style="font-size:20px;font-weight:700;" id="cvGet">0</div>
       </div>
     </div>
-    <button class="btn-buy" style="width:100%;margin-top:10px;" onclick="doConvert()">Exchange</button>
+    
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin:10px 0;">
+      Live Price: 1 <span id="convLiveSym">BTC</span> = <span id="convLivePrice" style="color:var(--gold);">...</span> USDT
+    </div>
+    
+    <button class="btn-buy" style="width:100%;margin-top:10px;" onclick="submitConvert()">Confirm Transfer</button>
   `;
   $("modalContent").innerHTML = html;
   $("modalBg").classList.add("on");
+  updateConvertUI();
 }
 
-function calcConvert(){
-  const usdt = +$("cvAmt").value;
-  const coinPair = $("cvCoin").value;
-  const price = ticker[coinPair]?.lastPrice || 1;
-  if(usdt > 0) $("cvGet").textContent = (usdt / price).toFixed(6);
-}
-
-function doConvert(){
-  const usdt = +$("cvAmt").value;
+function updateConvertUI(){
   const u = me();
-  if(usdt < 10) return toast("Minimum $10 required.");
-  if(usdt > u.balance) return toast("Insufficient balance.");
+  const coinBal = (u.assets && u.assets[currentConvCoin]) ? u.assets[currentConvCoin] : 0;
   
-  u.balance -= usdt;
-  u.tx.unshift({type:"Convert", amount:-usdt, status:"Completed", date:new Date().toLocaleString(), time:Date.now()});
-  saveDB(); closeModal(); renderAll();
-  toast("Converted successfully!");
+  if(convertDir === 'buy'){
+    $("convFromSym").textContent = 'USDT';
+    $("convToSym").value = currentConvCoin;
+    $("convFromBal").textContent = `Bal: ${u.balance.toFixed(2)}`;
+    $("convToBal").textContent = `Bal: ${coinBal.toFixed(4)}`;
+  } else {
+    $("convFromSym").textContent = currentConvCoin;
+    $("convToSym").value = 'USDT'; // visually not selectable but show
+    $("convFromBal").textContent = `Bal: ${coinBal.toFixed(4)}`;
+    $("convToBal").textContent = `Bal: ${u.balance.toFixed(2)}`;
+  }
+  
+  const price = ticker[currentConvCoin + "USDT"]?.lastPrice || 0;
+  $("convLiveSym").textContent = currentConvCoin;
+  $("convLivePrice").textContent = fmt(price);
+  calcConvertModal();
 }
 
+function swapConvertDir(){
+  convertDir = convertDir === 'buy' ? 'sell' : 'buy';
+  const oldVal = $("convAmt").value;
+  $("convAmt").value = $("convGet").value;
+  updateConvertUI();
+  $("convGet").value = oldVal;
+}
+
+function calcConvertModal(){
+  const amt = +$("convAmt").value;
+  const price = ticker[currentConvCoin + "USDT"]?.lastPrice || 1;
+  if(amt > 0){
+    if(convertDir === 'buy') $("convGet").value = (amt / price).toFixed(6);
+    else $("convGet").value = (amt * price).toFixed(2);
+  } else {
+    $("convGet").value = "";
+  }
+}
+
+function submitConvert(){
+  const amt = +$("convAmt").value;
+  const u = me();
+  if(!amt || amt <= 0) return toast("Enter valid amount.");
+  
+  const price = ticker[currentConvCoin + "USDT"]?.lastPrice || 0;
+  if(price <= 0) return toast("Price loading...");
+  
+  u.assets = u.assets || { BTC: 0, ETH: 0, SOL: 0 };
+  
+  if(convertDir === 'buy') {
+    // USDT to Coin
+    if(amt < 10) return toast("Minimum $10 required.");
+    if(amt > u.balance) return toast("Insufficient USDT balance.");
+    const coinGet = amt / price;
+    u.balance -= amt;
+    u.assets[currentConvCoin] = (u.assets[currentConvCoin] || 0) + coinGet;
+    u.tx.unshift({type:`Transfer USDT to ${currentConvCoin}`, amount:-amt, status:"Completed", date:new Date().toLocaleString(), time:Date.now()});
+  } else {
+    // Coin to USDT
+    const coinBal = u.assets[currentConvCoin] || 0;
+    if(amt > coinBal) return toast("Insufficient Coin balance.");
+    const usdtGet = amt * price;
+    u.assets[currentConvCoin] -= amt;
+    u.balance += usdtGet;
+    u.tx.unshift({type:`Transfer ${currentConvCoin} to USDT`, amount:usdtGet, status:"Completed", date:new Date().toLocaleString(), time:Date.now()});
+  }
+  
+  saveDB(); closeModal(); renderAll();
+  toast("Transfer successful!");
+}
 function closeModal(){ $("modalBg").classList.remove("on"); clearInterval(window.__depTimer); }
 
 /* ================= ADMIN ================= */
 async function renderAdmin(){
   const u = me(); if(!u || u.role!=="admin") return;
   
-  let depHtml = "", wdHtml = "";
-  DB.users.forEach(u2=>{
-    (u2.depsReq||[]).forEach(r=>{
-      if(r.status==="Pending"){
-        depHtml += `<div style="background:#1e2329;padding:12px;border-radius:8px;font-size:13px;margin-bottom:8px;">
-          <div style="color:var(--muted);font-size:11px;">${u2.email}</div><b>${r.amount} USDT</b> (${r.network})
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button onclick="appDep('${u2.email}','${r.id}')" style="background:var(--up);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Approve</button>
-            <button onclick="rejDep('${u2.email}','${r.id}')" style="background:var(--down);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Reject</button>
-          </div></div>`;
-      }
-    });
-    (u2.wdsReq||[]).forEach(r=>{
-      if(r.status==="Pending"){
-        wdHtml += `<div style="background:#1e2329;padding:12px;border-radius:8px;font-size:13px;margin-bottom:8px;">
-          <div style="color:var(--muted);font-size:11px;">${u2.email}</div><b>${r.amount} USDT</b> (${r.network})<br><span style="font-size:10px;">${r.address}</span>
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button onclick="appWd('${u2.email}','${r.id}')" style="background:var(--up);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Approve</button>
-            <button onclick="rejWd('${u2.email}','${r.id}')" style="background:var(--down);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Reject</button>
-          </div></div>`;
-      }
-    });
-  });
-  $("admDepsList").innerHTML = depHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
-  $("admWdsList").innerHTML = wdHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
-
   try {
-    const { data, error } = await _supabase.from('profiles').select('*');
-    if (error) throw error;
-    $("admUsersList").innerHTML = data.map(u2=>`
+    const { data: txs } = await _supabase.from('transactions').select('*').order('created_at', { ascending: false });
+    let depHtml = "", wdHtml = "";
+    
+    (txs||[]).forEach(r=>{
+      if(r.status === 'Pending' && r.type === 'deposit'){
+        depHtml += `<div style="background:#1e2329;padding:12px;border-radius:8px;font-size:13px;margin-bottom:8px;">
+          <div style="color:var(--muted);font-size:11px;">${r.user_email}</div><b>${r.amount} USDT</b> (${r.network})
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button onclick="appTx('${r.id}', 'deposit', '${r.user_email}', ${r.amount})" style="background:var(--up);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Approve</button>
+            <button onclick="rejTx('${r.id}')" style="background:var(--down);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Reject</button>
+          </div></div>`;
+      }
+      if(r.status === 'Pending' && r.type === 'withdraw'){
+        wdHtml += `<div style="background:#1e2329;padding:12px;border-radius:8px;font-size:13px;margin-bottom:8px;">
+          <div style="color:var(--muted);font-size:11px;">${r.user_email}</div><b>${r.amount} USDT</b> (${r.network})<br><span style="font-size:10px;">${r.address}</span>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button onclick="appTx('${r.id}', 'withdraw', '${r.user_email}', ${r.amount})" style="background:var(--up);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Approve</button>
+            <button onclick="rejTx('${r.id}')" style="background:var(--down);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Reject</button>
+          </div></div>`;
+      }
+    });
+    $("admDepsList").innerHTML = depHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
+    $("admWdsList").innerHTML = wdHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
+
+    const { data: users } = await _supabase.from('profiles').select('*');
+    $("admUsersList").innerHTML = (users||[]).map(u2=>`
       <div style="background:#1e2329;padding:12px;border-radius:8px;font-size:12px;margin-bottom:8px;">
         <b>${u2.full_name || 'No Name'}</b><br>
         <span style="color:var(--muted);">Email: ${u2.email}</span><br>
-        <span style="color:var(--muted);">Referral Code: ${u2.referral_code || 'N/A'}</span><br>
-        <span style="color:var(--gold);">Bal: 0.00 USDT</span>
+        <span style="color:var(--muted);">Mobile: ${u2.mobile || 'N/A'}</span><br>
+        <span style="color:var(--muted);">Ref: ${u2.referral_code || 'N/A'}</span>
       </div>`).join("") || "<div style='color:var(--muted);font-size:12px;'>No users.</div>";
-  } catch (e) {
-    $("admUsersList").innerHTML = `<div style="color:var(--down);font-size:12px;">Error loading users: ${e.message}</div>`;
+  } catch(e) {
+    console.log(e);
   }
 }
 
-function appDep(email, id){
-  const u = DB.users.find(x=>x.email===email); const r = (u.depsReq||[]).find(x=>x.id===id);
-  if(!r) return; r.status="Approved"; u.balance += r.amount; saveDB(); renderAdmin(); renderAll(); toast("Approved");
+async function appTx(id, type, email, amount){
+  await _supabase.from('transactions').update({ status: 'Approved' }).eq('id', id);
+  
+  const localUser = DB.users.find(x=>x.email===email);
+  if(localUser && type === 'deposit') { localUser.balance += amount; saveDB(); }
+  
+  renderAdmin(); toast("Approved");
 }
-function rejDep(email, id){
-  const u = DB.users.find(x=>x.email===email); const r = (u.depsReq||[]).find(x=>x.id===id);
-  if(!r) return; r.status="Rejected"; saveDB(); renderAdmin(); renderAll();
-}
-function appWd(email, id){
-  const u = DB.users.find(x=>x.email===email); const r = (u.wdsReq||[]).find(x=>x.id===id);
-  if(!r) return; r.status="Completed"; saveDB(); renderAdmin(); renderAll(); toast("Sent");
-}
-function rejWd(email, id){
-  const u = DB.users.find(x=>x.email===email); const r = (u.wdsReq||[]).find(x=>x.id===id);
-  if(!r) return; r.status="Rejected"; u.balance += r.amount; saveDB(); renderAdmin(); renderAll();
+
+async function rejTx(id){
+  await _supabase.from('transactions').update({ status: 'Rejected' }).eq('id', id);
+  renderAdmin(); toast("Rejected");
 }
 
 function genCode(){
@@ -1231,16 +1386,7 @@ function sendChat(){
 
 /* ================= BOOT ================= */
 checkSession();
-
 window.addEventListener("resize", ()=>{ if($("trade").classList.contains("active")) drawChart(); });
-
-// Listen to Auth state changes
-_supabase.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_OUT') {
-    $("app").classList.add("hidden");
-    $("auth").classList.remove("hidden");
-  }
-});
 </script>
 </body>
 </html>
