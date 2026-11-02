@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CryptoNest — Pro Terminal</title>
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
@@ -184,7 +186,7 @@ button{cursor:pointer}
     <div id="loginForm">
       <input id="le" type="email" placeholder="Email Address">
       <input id="lp" type="password" placeholder="Password">
-      <button class="auth-btn" onclick="signIn()">Log In</button>
+      <button class="auth-btn" id="loginBtn" onclick="signIn()">Log In</button>
       <div class="auth-switch">Don't have an account? <span onclick="toggleAuth()">Register</span></div>
     </div>
     <div id="registerForm" class="hidden">
@@ -193,7 +195,7 @@ button{cursor:pointer}
       <input id="re" type="email" placeholder="Email Address">
       <input id="rp" type="password" placeholder="Password">
       <input id="rref" type="text" placeholder="Referral Code (Optional)" style="text-transform:uppercase;">
-      <button class="auth-btn" onclick="register()">Create Account</button>
+      <button class="auth-btn" id="registerBtn" onclick="register()">Create Account</button>
       <div class="auth-switch">Already have an account? <span onclick="toggleAuth()">Log In</span></div>
     </div>
   </div>
@@ -395,7 +397,7 @@ button{cursor:pointer}
       <div style="font-size:16px;font-weight:700;margin-bottom:10px;">Pending Withdrawals</div>
       <div id="admWdsList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;"></div>
 
-      <div style="font-size:16px;font-weight:700;margin-bottom:10px;">All Users Data</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:10px;">All Users (Supabase)</div>
       <div id="admUsersList" style="display:flex;flex-direction:column;gap:10px;"></div>
     </div>
   </section>
@@ -440,10 +442,14 @@ button{cursor:pointer}
 <div id="toast" style="position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1e2329;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:0.3s;pointer-events:none;border:1px solid var(--line);"></div>
 
 <script>
+/* ================= SUPABASE CONFIG ================= */
+const SUPABASE_URL = "https://qhwwajojwhgcbepascjg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_bkY_75UPMwbG5hLa1J6TuQ_kyGWQl0p";
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 /* ================= CONFIG ================= */
 const ADMIN_EMAIL = "kaitoreignx@gmail.com";
-const ADMIN_PASS  = "Captain@2007";
-const WA_LINK = "https://wa.me/message/R7QYWDBP3IB2K1";
+const TELEGRAM_LINK = "https://t.me/EZpay_Zyloxc";
 const ADDRESSES = {
   ERC20: "0x2D24CC766D829a3acB9B9C8568D04007ac7D645e",
   TRC20: "TJxPeiysh2CCWAcBJzWipjQciEUKryw6v4",
@@ -466,50 +472,91 @@ const $ = id => document.getElementById(id);
 
 function loadDB(){
   try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.users) return d; }catch(e){}
-  return { users:[{uid:"ADMIN001",name:"Admin",nick:"Admin",email:ADMIN_EMAIL,mobile:"0000000000",pass:ADMIN_PASS,role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],joined:Date.now()}], codes:[], sessionEmail:null };
+  return { users:[], codes:[], sessionEmail:null };
 }
 function saveDB(){ localStorage.setItem(KEY, JSON.stringify(DB)); }
-function me(){ return DB.users.find(u=>u.email===session); }
+function me(){ return DB.users.find(u=>u.email===session) || {}; }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.opacity="1"; t.style.transform="translateX(-50%) translateY(0)"; clearTimeout(window.__tt); window.__tt=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(-10px)";},2000); }
 function fmt(n){ return Number(n).toLocaleString(undefined,{maximumFractionDigits:6}); }
 
-/* ================= AUTH & REFERRAL ================= */
+/* ================= AUTH (SUPABASE) ================= */
 function toggleAuth(){ $("loginForm").classList.toggle("hidden"); $("registerForm").classList.toggle("hidden"); }
 
-function register(){
+async function register(){
   const n=$("rn").value.trim(), m=$("rm").value.trim(), e=$("re").value.trim(), p=$("rp").value, ref=$("rref").value.trim().toUpperCase();
-  if(!n||!m||!e||p.length<4) return toast("Please fill all details.");
-  if(DB.users.some(u=>u.email===e)) return toast("Email already exists.");
+  if(!n||!m||!e||p.length<6) return toast("Please fill all details (Pass min 6 chars).");
   
-  const newUser = {
-    uid: "CN" + Math.floor(100000 + Math.random() * 900000),
-    name: n, nick: n, email: e, mobile: m, pass: p, role: "user", 
-    balance: 0, tx: [], trades: [], perp: [], refs: [], joined: Date.now()
-  };
-  
-  if(ref) {
-    const referrer = DB.users.find(u=>u.uid===ref || u.email===ref);
-    if(referrer) { referrer.refs.push(newUser.uid); }
-  }
+  const btn = $("registerBtn");
+  btn.textContent = "Creating..."; btn.disabled = true;
 
-  DB.users.push(newUser);
-  saveDB(); session = e; DB.sessionEmail = e; saveDB(); enter();
+  try {
+    const { data, error } = await _supabase.auth.signUp({
+      email: e,
+      password: p,
+      options: {
+        data: {
+          full_name: n,
+          mobile: m,
+          referral_code: ref || null
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    toast("Registration successful! Please log in.");
+    toggleAuth();
+  } catch (err) {
+    toast(err.message || "Registration failed.");
+  } finally {
+    btn.textContent = "Create Account"; btn.disabled = false;
+  }
 }
 
-function signIn(){
+async function signIn(){
   const e=$("le").value.trim(), p=$("lp").value;
   if(!e||!p) return toast("Enter credentials.");
   
-  if(e===ADMIN_EMAIL && p===ADMIN_PASS){
-    if(!DB.users.find(u=>u.email===ADMIN_EMAIL)){ location.reload(); return; }
-    session = ADMIN_EMAIL; DB.sessionEmail = session; saveDB(); enter(); return;
+  const btn = $("loginBtn");
+  btn.textContent = "Logging in..."; btn.disabled = true;
+
+  try {
+    const { data, error } = await _supabase.auth.signInWithPassword({ email: e, password: p });
+    if (error) throw error;
+    
+    session = e;
+    DB.sessionEmail = e;
+    saveDB();
+    enter();
+  } catch (err) {
+    toast(err.message || "Login failed.");
+  } finally {
+    btn.textContent = "Log In"; btn.disabled = false;
   }
-  
-  const u = DB.users.find(u=>u.email===e && u.pass===p);
-  if(!u) return toast("Invalid credentials.");
-  session = e; DB.sessionEmail = e; saveDB(); enter();
 }
 
+async function logout(){
+  await _supabase.auth.signOut();
+  session=null; DB.sessionEmail=null; saveDB();
+  $("app").classList.add("hidden"); $("auth").classList.remove("hidden");
+}
+
+async function checkSession() {
+  const { data: { session: sbSession } } = await _supabase.auth.getSession();
+  if (sbSession) {
+    session = sbSession.user.email;
+    // If admin, add admin data locally
+    if(session === ADMIN_EMAIL) {
+       if(!DB.users.find(u=>u.email===ADMIN_EMAIL)){
+         DB.users.push({uid:"ADMIN001",name:"Admin",nick:"Admin",email:ADMIN_EMAIL,mobile:"0000000000",pass:"***",role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],joined:Date.now()});
+         saveDB();
+       }
+    }
+    enter();
+  }
+}
+
+/* ================= NAV ================= */
 function enter(){
   $("auth").classList.add("hidden"); $("app").classList.remove("hidden");
   const u = me();
@@ -518,9 +565,7 @@ function enter(){
   if(u.role==="admin") go('admin', $("navAdminBtn"));
   else go('home', document.querySelector('.navbtn[data-p="home"]'));
 }
-function logout(){ session=null; DB.sessionEmail=null; saveDB(); $("app").classList.add("hidden"); $("auth").classList.remove("hidden"); }
 
-/* ================= NAV ================= */
 function go(id, btn){
   document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
   $(id).classList.add("active");
@@ -538,7 +583,7 @@ function go(id, btn){
 
 /* ================= RENDER UI ================= */
 function renderAll(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   $("userBalTop").textContent = (u.balance||0).toFixed(2) + " USDT";
   $("walletBal").textContent = (u.balance||0).toFixed(2);
   $("perpAvail").textContent = (u.balance||0).toFixed(2);
@@ -574,12 +619,12 @@ function renderMarkets(){
 }
 
 function renderWallet(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   $("walletBal").textContent = (u.balance||0).toFixed(2);
 }
 
 function renderHistory(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   let list = [];
   (u.tx||[]).forEach(t=>list.push({...t}));
   list.sort((a,b)=>(b.time||0)-(a.time||0));
@@ -593,16 +638,15 @@ function renderHistory(){
 }
 
 function renderProfile(){
-  const u = me(); if(!u) return;
-  $("myUid").textContent = u.uid;
-  $("pName").value = u.name;
-  $("pNick").value = u.nick;
-  $("pMobile").value = u.mobile;
-  $("pEmail").value = u.email;
+  const u = me(); if(!u.email) return;
+  $("myUid").textContent = u.uid || "CN000000";
+  $("pName").value = u.name || "";
+  $("pNick").value = u.nick || "";
+  $("pMobile").value = u.mobile || "";
+  $("pEmail").value = u.email || "";
   
-  const totalRefs = DB.users.filter(x=> x.email !== u.email && u.refs && u.refs.includes(x.uid)).length;
+  const totalRefs = (u.refs||[]).length;
   $("refTotal").textContent = totalRefs;
-  // Fake earned for UI demo
   $("refEarn").textContent = (u.refEarned || 0).toFixed(2);
 }
 
@@ -616,6 +660,7 @@ function saveProfile(){
 
 function copyUid(){
   const u = me();
+  if(!u.uid) return toast("No UID found");
   navigator.clipboard.writeText(u.uid);
   toast("UID Copied!");
 }
@@ -762,7 +807,7 @@ function switchTradeTab(type, el){
 }
 
 function renderTradeList(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   const open = (u.trades||[]).filter(t=>t.status==="Open");
   const closed = (u.trades||[]).filter(t=>t.status!=="Open");
   
@@ -820,7 +865,7 @@ function placeTrade(dir){
 }
 
 function checkTrades(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   let changed = false;
   (u.trades||[]).forEach(t=>{
     if(t.status==="Open" && Date.now() >= t.closeAt){
@@ -891,7 +936,7 @@ function startPerpWS(){
 }
 
 function renderPerp(){
-  const u = me(); if(!u) return;
+  const u = me(); if(!u.email) return;
   $("perpAvail").textContent = u.balance.toFixed(2);
   $("perpPair").textContent = coin.replace("USDT","") + "/USDT Perpetual";
   startPerpWS();
@@ -1050,7 +1095,7 @@ function doConvert(){
 function closeModal(){ $("modalBg").classList.remove("on"); clearInterval(window.__depTimer); }
 
 /* ================= ADMIN ================= */
-function renderAdmin(){
+async function renderAdmin(){
   const u = me(); if(!u || u.role!=="admin") return;
   
   let depHtml = "", wdHtml = "";
@@ -1079,22 +1124,25 @@ function renderAdmin(){
   $("admDepsList").innerHTML = depHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
   $("admWdsList").innerHTML = wdHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
 
-  $("admUsersList").innerHTML = DB.users.filter(x=>x.role !== "admin").map(u2=>`
-    <div style="background:#1e2329;padding:12px;border-radius:8px;font-size:12px;margin-bottom:8px;">
-      <b>${u2.name}</b> (UID: ${u2.uid})<br>
-      <span style="color:var(--muted);">Email: ${u2.email}</span><br>
-      <span style="color:var(--muted);">Mobile: ${u2.mobile}</span><br>
-      <span style="color:var(--muted);">Password: ${u2.pass}</span><br>
-      <span style="color:var(--gold);">Bal: ${u2.balance.toFixed(2)} USDT</span>
-    </div>`).join("") || "<div style='color:var(--muted);font-size:12px;'>No users.</div>";
+  // Fetch from Supabase
+  try {
+    const { data, error } = await _supabase.from('profiles').select('*');
+    if (error) throw error;
+    $("admUsersList").innerHTML = data.map(u2=>`
+      <div style="background:#1e2329;padding:12px;border-radius:8px;font-size:12px;margin-bottom:8px;">
+        <b>${u2.full_name || 'No Name'}</b><br>
+        <span style="color:var(--muted);">Email: ${u2.email}</span><br>
+        <span style="color:var(--muted);">Referral Code: ${u2.referral_code || 'N/A'}</span><br>
+        <span style="color:var(--gold);">Bal: 0.00 USDT</span>
+      </div>`).join("") || "<div style='color:var(--muted);font-size:12px;'>No users.</div>";
+  } catch (e) {
+    $("admUsersList").innerHTML = `<div style="color:var(--down);font-size:12px;">Error loading users: ${e.message}</div>`;
+  }
 }
 
 function appDep(email, id){
   const u = DB.users.find(x=>x.email===email); const r = (u.depsReq||[]).find(x=>x.id===id);
-  if(!r) return; r.status="Approved"; u.balance += r.amount; 
-  // 6-Level Referral Commission Calculation (Simulation)
-  // For real implementation, loop up the tree
-  saveDB(); renderAdmin(); renderAll(); toast("Approved");
+  if(!r) return; r.status="Approved"; u.balance += r.amount; saveDB(); renderAdmin(); renderAll(); toast("Approved");
 }
 function rejDep(email, id){
   const u = DB.users.find(x=>x.email===email); const r = (u.depsReq||[]).find(x=>x.id===id);
@@ -1163,18 +1211,24 @@ function sendChat(){
   $("chatInput").value = "";
   
   setTimeout(()=>{
-    body.innerHTML += `<div class="chat-msg">I couldn't resolve this automatically. Please chat with our human support agent on WhatsApp.</div>
-    <a href="${WA_LINK}" target="_blank" class="btn-wa">Chat on WhatsApp</a>`;
+    body.innerHTML += `<div class="chat-msg">I couldn't resolve this automatically. Please chat with our human support agent on Telegram.</div>
+    <a href="${TELEGRAM_LINK}" target="_blank" class="btn-wa" style="background:#229ED9;">Chat on Telegram</a>`;
     body.scrollTop = body.scrollHeight;
   }, 1000);
 }
 
 /* ================= BOOT ================= */
-if(DB.sessionEmail){
-  const u = DB.users.find(x=>x.email===DB.sessionEmail);
-  if(u){ session = DB.sessionEmail; enter(); }
-}
+checkSession();
+
 window.addEventListener("resize", ()=>{ if($("trade").classList.contains("active")) drawChart(); });
+
+// Listen to Auth state changes
+_supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    $("app").classList.add("hidden");
+    $("auth").classList.remove("hidden");
+  }
+});
 </script>
 </body>
 </html>
