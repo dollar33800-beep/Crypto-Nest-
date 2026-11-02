@@ -29,7 +29,7 @@ button{cursor:pointer}
 .pill{font-size:12px;padding:6px 10px;border-radius:6px;background:#1e2329;color:var(--txt);font-weight:600;border:1px solid var(--line);}
 .profile-btn{width:32px;height:32px;border-radius:50%;background:#1e2329;display:flex;justify-content:center;align-items:center;border:1px solid var(--line);color:var(--txt);font-size:16px;cursor:pointer;}
 
-/* Nav Bar Bottom (5 Tabs) */
+/* Nav Bar Bottom */
 .bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#0b0e14;
   border-top:1px solid var(--line);display:flex;justify-content:space-around;z-index:100}
 .navbtn{color:var(--muted);font-size:10px;display:flex;flex-direction:column;
@@ -86,7 +86,7 @@ button{cursor:pointer}
 .btn-sell{background:var(--down);color:#fff;font-size:16px;font-weight:800;padding:16px;border-radius:8px;text-align:center;transition:0.1s}
 .btn-buy:active,.btn-sell:active{transform:scale(0.98);opacity:0.9}
 
-/* Lists & Cards (History, Open Pos) */
+/* Lists & Cards */
 .pos-card{background:var(--card);padding:12px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px;font-size:12px;}
 .pos-header{display:flex;justify-content:space-between;margin-bottom:8px;font-weight:700;}
 .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;color:var(--muted);}
@@ -144,7 +144,7 @@ button{cursor:pointer}
 .ref-level-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1b2433;font-size:13px;}
 .ref-level-row:last-child{border:none;}
 
-/* Login Screen (CryptoNest Style) */
+/* Auth Screen */
 .auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0a0e17;position:fixed;inset:0;z-index:500;overflow-y:auto;}
 .authbox{width:100%;max-width:400px;background:#0f1420;padding:30px 24px;border-radius:20px;border:1px solid #1f293d;box-shadow:0 0 50px rgba(41,98,255,0.1);}
 .auth-logo{text-align:center;margin-bottom:24px;}
@@ -153,7 +153,7 @@ button{cursor:pointer}
 .auth-logo p{margin:4px 0 0 0;font-size:12px;color:#8892a0;}
 .authbox input, .authbox select{width:100%;background:#161e2e;padding:14px;border-radius:10px;margin-bottom:12px;color:#fff;border:1px solid #25334d;font-size:13px;transition:0.2s;}
 .authbox input:focus{border-color:#00d2ff;box-shadow:0 0 0 3px rgba(0,210,255,0.1);}
-.auth-btn{width:100%;background:linear-gradient(90deg, #00d2ff, #2962ff);padding:14px;border-radius:10px;font-weight:700;font-size:15px;color:#fff;margin-top:8px;box-shadow:0 8px 20px rgba(41,98,255,0.3);}
+.auth-btn{width:100%;background:linear-gradient(90deg, #00d2ff, #2962ff);padding:14px;border-radius:10px;font-weight:700;font-size:15px;color:#fff;margin-top:8px;box-shadow:0 8px 20px rgba(41,98,255,0.3);transition:0.2s;}
 .auth-switch{text-align:center;margin-top:16px;font-size:13px;color:#8892a0;}
 .auth-switch span{color:#00d2ff;cursor:pointer;font-weight:600;}
 
@@ -171,12 +171,12 @@ button{cursor:pointer}
 .chat-input-box{display:flex;padding:10px;border-top:1px solid var(--line);background:#1e2329;border-radius:0 0 16px 16px;}
 .chat-input-box input{flex:1;background:none;color:#fff;font-size:13px;}
 .chat-input-box button{color:var(--blue);font-weight:700;padding:0 10px;}
-.btn-wa{background:#25d366;color:#fff;padding:10px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;display:block;text-decoration:none;margin-top:8px;}
+.btn-wa{background:#229ED9;color:#fff;padding:10px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;display:block;text-decoration:none;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<!-- Auth Screen (CryptoNest Style) -->
+<!-- Auth Screen -->
 <div id="auth" class="auth">
   <div class="authbox">
     <div class="auth-logo">
@@ -218,7 +218,7 @@ button{cursor:pointer}
     <div class="market-list" id="homeMarkets"></div>
   </section>
 
-  <!-- TRADE (Binary) -->
+  <!-- TRADE -->
   <section id="trade" class="page">
     <div class="trade-header">
       <div style="display:flex;align-items:center;">
@@ -402,7 +402,7 @@ button{cursor:pointer}
     </div>
   </section>
 
-  <!-- Bottom Nav (5 Tabs + Admin Hidden) -->
+  <!-- Bottom Nav -->
   <nav class="bottom">
     <button class="navbtn active" onclick="go('home', this)" data-p="home">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
@@ -479,7 +479,7 @@ function me(){ return DB.users.find(u=>u.email===session) || {}; }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.opacity="1"; t.style.transform="translateX(-50%) translateY(0)"; clearTimeout(window.__tt); window.__tt=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(-10px)";},2000); }
 function fmt(n){ return Number(n).toLocaleString(undefined,{maximumFractionDigits:6}); }
 
-/* ================= AUTH (SUPABASE) ================= */
+/* ================= AUTH & REFERRAL ================= */
 function toggleAuth(){ $("loginForm").classList.toggle("hidden"); $("registerForm").classList.toggle("hidden"); }
 
 async function register(){
@@ -490,21 +490,19 @@ async function register(){
   btn.textContent = "Creating..."; btn.disabled = true;
 
   try {
+    const redirectUrl = window.location.origin + window.location.pathname;
     const { data, error } = await _supabase.auth.signUp({
       email: e,
       password: p,
       options: {
-        data: {
-          full_name: n,
-          mobile: m,
-          referral_code: ref || null
-        }
+        emailRedirectTo: redirectUrl,
+        data: { full_name: n, mobile: m, referral_code: ref || null }
       }
     });
 
     if (error) throw error;
 
-    toast("Registration successful! Please log in.");
+    toast("Registration successful! Check email to verify.");
     toggleAuth();
   } catch (err) {
     toast(err.message || "Registration failed.");
@@ -517,6 +515,17 @@ async function signIn(){
   const e=$("le").value.trim(), p=$("lp").value;
   if(!e||!p) return toast("Enter credentials.");
   
+  // Admin Bypass
+  if (e === ADMIN_EMAIL && p === "Captain@2007") {
+    let adminUser = DB.users.find(u => u.email === e);
+    if (!adminUser) {
+      adminUser = {uid:"ADMIN001",name:"Admin",nick:"Admin",email:e,mobile:"0000000000",pass:p,role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],joined:Date.now()};
+      DB.users.push(adminUser);
+    }
+    session = e; DB.sessionEmail = e; saveDB(); enter(); return;
+  }
+
+  // Normal Login
   const btn = $("loginBtn");
   btn.textContent = "Logging in..."; btn.disabled = true;
 
@@ -524,10 +533,12 @@ async function signIn(){
     const { data, error } = await _supabase.auth.signInWithPassword({ email: e, password: p });
     if (error) throw error;
     
-    session = e;
-    DB.sessionEmail = e;
-    saveDB();
-    enter();
+    let localUser = DB.users.find(u => u.email === e);
+    if(!localUser){
+       localUser = {uid:"CN"+Math.floor(100000+Math.random()*900000), name:"User", email:e, balance:0, tx:[], trades:[], perp:[], refs:[]};
+       DB.users.push(localUser);
+    }
+    session = e; DB.sessionEmail = e; saveDB(); enter();
   } catch (err) {
     toast(err.message || "Login failed.");
   } finally {
@@ -536,23 +547,27 @@ async function signIn(){
 }
 
 async function logout(){
-  await _supabase.auth.signOut();
+  if(session !== ADMIN_EMAIL) await _supabase.auth.signOut();
   session=null; DB.sessionEmail=null; saveDB();
   $("app").classList.add("hidden"); $("auth").classList.remove("hidden");
 }
 
 async function checkSession() {
+  if (window.location.hash.includes('access_token')) {
+    toast("Verification Successful! Redirecting...");
+    setTimeout(()=>{ window.location.hash = ''; enter(); }, 1500);
+    return;
+  }
   const { data: { session: sbSession } } = await _supabase.auth.getSession();
   if (sbSession) {
     session = sbSession.user.email;
-    // If admin, add admin data locally
-    if(session === ADMIN_EMAIL) {
-       if(!DB.users.find(u=>u.email===ADMIN_EMAIL)){
-         DB.users.push({uid:"ADMIN001",name:"Admin",nick:"Admin",email:ADMIN_EMAIL,mobile:"0000000000",pass:"***",role:"admin",balance:10000,tx:[],trades:[],perp:[],refs:[],joined:Date.now()});
-         saveDB();
-       }
+    if(!DB.users.find(u=>u.email===session)){
+        DB.users.push({uid:"CN"+Math.floor(100000+Math.random()*900000), name:sbSession.user.user_metadata.full_name||"User", email:session, balance:0, tx:[], trades:[], perp:[], refs:[]});
+        saveDB();
     }
     enter();
+  } else if(DB.sessionEmail) {
+     session = DB.sessionEmail; enter();
   }
 }
 
@@ -920,13 +935,11 @@ function startPerpWS(){
     const msg = JSON.parse(event.data);
     if(msg.bids && msg.asks){
       let obHtml = "";
-      // Asks (Sells)
       for(let i=4; i>=0; i--) {
         if(msg.asks[i]) obHtml += `<div class="ob-row up"><span>${fmt(msg.asks[i][0])}</span><span>${fmt(msg.asks[i][1])}</span></div>`;
       }
       const mid = (parseFloat(msg.bids[0][0]) + parseFloat(msg.asks[0][0])) / 2;
       obHtml += `<div class="ob-row" style="padding:5px 8px;font-size:12px;color:var(--down);font-weight:800;background:#1e2329;">${fmt(mid)}</div>`;
-      // Bids (Buys)
       for(let i=0; i<5; i++) {
         if(msg.bids[i]) obHtml += `<div class="ob-row down"><span>${fmt(msg.bids[i][0])}</span><span>${fmt(msg.bids[i][1])}</span></div>`;
       }
@@ -1124,7 +1137,6 @@ async function renderAdmin(){
   $("admDepsList").innerHTML = depHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
   $("admWdsList").innerHTML = wdHtml || "<div style='color:var(--muted);font-size:12px;'>None</div>";
 
-  // Fetch from Supabase
   try {
     const { data, error } = await _supabase.from('profiles').select('*');
     if (error) throw error;
@@ -1212,7 +1224,7 @@ function sendChat(){
   
   setTimeout(()=>{
     body.innerHTML += `<div class="chat-msg">I couldn't resolve this automatically. Please chat with our human support agent on Telegram.</div>
-    <a href="${TELEGRAM_LINK}" target="_blank" class="btn-wa" style="background:#229ED9;">Chat on Telegram</a>`;
+    <a href="${TELEGRAM_LINK}" target="_blank" class="btn-wa">Chat on Telegram</a>`;
     body.scrollTop = body.scrollHeight;
   }, 1000);
 }
