@@ -485,10 +485,11 @@ const ADDRESSES = {
 };
 const SYMBOLS = ["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","ADAUSDT","DOGEUSDT","AVAXUSDT","LINKUSDT","TONUSDT","DOTUSDT","MATICUSDT","SHIBUSDT","LTCUSDT","TRXUSDT","UNIUSDT","ATOMUSDT","ETCUSDT","XLMUSDT","BCHUSDT","FILUSDT","NEARUSDT","APTUSDT","ARBUSDT","OPUSDT","INJUSDT","SUIUSDT","SEIUSDT","TIAUSDT","RNDRUSDT","FETUSDT","PEPEUSDT","WIFUSDT","ORDIUSDT","JUPUSDT","STRKUSDT","WLDUSDT","BONKUSDT","FLOKIUSDT","GALAUSDT"];
 
-// SUPABASE SETUP (Aapki Keys Set Hain)
+// SUPABASE SETUP
 const SUPABASE_URL = "https://jnjbmzwxgugbdpiomdks.supabase.co";
 const SUPABASE_KEY = "sb_publishable_-6R2uRPbi8bwXKv5i4d8ow_aDXyUwAE";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Global access ke liye window object me daala hai
+window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let session = null;
 let currentUser = {};
@@ -530,8 +531,10 @@ async function requestOTP(){
   const p=$("rp").value;
   if(!n||!m||!e||p.length<6) return toast("Fill all details (Pass min 6 chars).");
 
-  const { data: existing } = await supabase.from('users').select('email').eq('email', e).single();
-  if(existing) return toast("Email already registered.");
+  try {
+    const { data: existing, error } = await window.supabaseClient.from('users').select('email').eq('email', e).maybeSingle();
+    if(existing) return toast("Email already registered.");
+  } catch(err) { console.log(err); }
 
   const otp = String(Math.floor(100000 + Math.random()*900000));
   pendingOTP = { name:n, mobile:m, email:e, pass:p, otp:otp, created:Date.now() };
@@ -570,10 +573,11 @@ async function verifyOTP(){
     email: pendingOTP.email, password: pendingOTP.pass, name: pendingOTP.name, mobile: pendingOTP.mobile, role: "user"
   };
   
-  const { error } = await supabase.from('users').insert([newUser]);
+  const { error } = await window.supabaseClient.from('users').insert([newUser]);
   
-  if(error) { toast("Registration failed: " + error.message); }
-  else {
+  if(error) { 
+    toast("Registration failed: " + error.message); 
+  } else {
     toast("Account created successfully!");
     pendingOTP = null;
     backToRegister();
@@ -602,7 +606,7 @@ function showForgotPassword(){
 
 async function openResetPopup(){
   const email = $("resetEmail").value.trim().toLowerCase();
-  const { data } = await supabase.from('users').select('email').eq('email', email).single();
+  const { data } = await window.supabaseClient.from('users').select('email').eq('email', email).single();
   if(!data) return toast("Email not found.");
   
   $("modalContent").innerHTML = `
@@ -623,7 +627,7 @@ async function confirmResetPassword(email){
   if(code !== "098765") return toast("Invalid verification code. Contact Admin.");
   if(newPass.length < 6) return toast("Password must be at least 6 characters.");
   
-  await supabase.from('users').update({ password: newPass }).eq('email', email);
+  await window.supabaseClient.from('users').update({ password: newPass }).eq('email', email);
   closeModal();
   toast("Password reset successfully! Please log in.");
   $("le").value = email;
@@ -634,15 +638,15 @@ async function signIn(){
   if(!e||!p) return toast("Enter credentials.");
 
   if(e===ADMIN_EMAIL && p==="Captain@2007"){
-    let { data: admin } = await supabase.from('users').select('*').eq('email', e).single();
+    let { data: admin } = await window.supabaseClient.from('users').select('*').eq('email', e).maybeSingle();
     if(!admin){
-      await supabase.from('users').insert([{ email: e, password: p, name: "Admin", role: "admin", balance: 10000 }]);
+      await window.supabaseClient.from('users').insert([{ email: e, password: p, name: "Admin", role: "admin", balance: 10000 }]);
     }
     session = e; currentUser = { email: e, role: "admin", balance: 10000 };
     enter(); return;
   }
 
-  const { data: user } = await supabase.from('users').select('*').eq('email', e).eq('password', p).single();
+  const { data: user } = await window.supabaseClient.from('users').select('*').eq('email', e).eq('password', p).single();
   if(!user) return toast("Invalid email or password.");
   
   session = e; currentUser = user; enter();
@@ -733,7 +737,7 @@ async function renderProfile(){
 
 async function saveProfile(){
   const n = $("pName").value, m = $("pMobile").value;
-  await supabase.from('users').update({ name: n, mobile: m }).eq('email', currentUser.email);
+  await window.supabaseClient.from('users').update({ name: n, mobile: m }).eq('email', currentUser.email);
   currentUser.name = n; currentUser.mobile = m;
   toast("Profile updated!"); renderProfile();
 }
@@ -741,7 +745,7 @@ async function saveProfile(){
 async function saveAddress(){
   const addr = $("pAddress").value.trim();
   if(!addr) return toast("Enter address first.");
-  await supabase.from('users').update({ address: addr }).eq('email', currentUser.email);
+  await window.supabaseClient.from('users').update({ address: addr }).eq('email', currentUser.email);
   currentUser.address = addr;
   toast("Address saved successfully!");
 }
@@ -847,7 +851,7 @@ async function placeTrade(dir){
   if(amt > currentUser.balance) return toast("Insufficient balance.");
   
   const newBal = currentUser.balance - amt;
-  await supabase.from('users').update({ balance: newBal }).eq('email', currentUser.email);
+  await window.supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
   currentUser.balance = newBal; renderAll();
   toast(`Trade placed: ${dir.toUpperCase()}`);
 }
@@ -866,7 +870,7 @@ async function placePerpTrade(){
   if(amt > currentUser.balance) return toast("Insufficient balance");
   
   const newBal = currentUser.balance - amt;
-  await supabase.from('users').update({ balance: newBal }).eq('email', currentUser.email);
+  await window.supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
   currentUser.balance = newBal; renderAll();
   toast(perpDir.toUpperCase() + " position opened.");
 }
@@ -921,7 +925,7 @@ function openDepositStep2(){
 }
 
 async function submitDeposit(amt, net){
-  await supabase.from('requests').insert([{ user_email: currentUser.email, type: 'Deposit', amount: amt, network: net, status: 'Pending' }]);
+  await window.supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Deposit', amount: amt, network: net, status: 'Pending' }]);
   closeModal(); toast("Deposit request submitted to Admin.");
 }
 
@@ -958,8 +962,8 @@ async function confirmWithdrawOTP(amt){
   const code = $("addrVerifyCode").value.trim();
   if(!code) return toast("Enter OTP code.");
   
-  await supabase.from('requests').insert([{ user_email: currentUser.email, type: 'Withdraw', amount: amt, network: 'USDT', address: currentUser.address, status: 'Pending' }]);
-  await supabase.from('users').update({ withdraw_otp: code }).eq('email', currentUser.email);
+  await window.supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Withdraw', amount: amt, network: 'USDT', address: currentUser.address, status: 'Pending' }]);
+  await window.supabaseClient.from('users').update({ withdraw_otp: code }).eq('email', currentUser.email);
   
   closeModal(); toast("Withdrawal requested. Admin will verify and process.");
 }
@@ -970,8 +974,8 @@ function closeModal(){ $("modalBg").classList.remove("on"); }
 async function renderAdmin(){
   if(currentUser.role !== 'admin') return;
   
-  const { data: reqs } = await supabase.from('requests').select('*').order('created_at', { ascending: false });
-  const { data: users } = await supabase.from('users').select('*');
+  const { data: reqs } = await window.supabaseClient.from('requests').select('*').order('created_at', { ascending: false });
+  const { data: users } = await window.supabaseClient.from('users').select('*');
 
   if(reqs) {
     $("admRequestsList").innerHTML = reqs.map(r => {
@@ -1000,16 +1004,16 @@ async function renderAdmin(){
 }
 
 async function appReq(id, email, amt, type){
-  await supabase.from('requests').update({ status: 'Approved' }).eq('id', id);
+  await window.supabaseClient.from('requests').update({ status: 'Approved' }).eq('id', id);
   if(type === 'Deposit') {
-    const { data: u } = await supabase.from('users').select('balance').eq('email', email).single();
-    if(u) await supabase.from('users').update({ balance: u.balance + parseFloat(amt) }).eq('email', email);
+    const { data: u } = await window.supabaseClient.from('users').select('balance').eq('email', email).single();
+    if(u) await window.supabaseClient.from('users').update({ balance: u.balance + parseFloat(amt) }).eq('email', email);
   }
   toast("Request Approved"); renderAdmin();
 }
 
 async function rejReq(id){
-  await supabase.from('requests').update({ status: 'Rejected' }).eq('id', id);
+  await window.supabaseClient.from('requests').update({ status: 'Rejected' }).eq('id', id);
   toast("Request Rejected"); renderAdmin();
 }
 
