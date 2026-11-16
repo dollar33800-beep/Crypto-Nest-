@@ -3,481 +3,391 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CryptoNest — Pro Terminal</title>
+<title>CryptoNest — Premium Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
-:root{
-  --bg:#05070d;--card:#0c111c;--card2:#131b26;--line:#1b2433;--txt:#f5f8ff;--muted:#8592a6;
-  --up:#0ecb81;--down:#f6465d;--blue:#2962ff;--gold:#fcd535;--shadow:0 18px 50px #0006;
+:root {
+  --bg: #09090b;
+  --surface: #121217;
+  --surface-hover: #1c1c24;
+  --border: #272732;
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --primary: #06b6d4;
+  --primary-hover: #0891b2;
+  --up: #10b981;
+  --down: #ef4444;
+  --gold: #f59e0b;
+  --font: 'Inter', system-ui, sans-serif;
+  --radius: 12px;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Poppins', sans-serif}
-html,body{margin:0;background:var(--bg);color:var(--txt);overflow-x:hidden}
-button,input,select{font:inherit;border:none;outline:none;background:none;color:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-.app{min-height:100vh;padding-bottom:70px;}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: var(--font); }
+html, body { margin: 0; background: var(--bg); color: var(--text-main); overflow-x: hidden; }
+button, input, select { font: inherit; border: none; outline: none; background: none; color: inherit; }
+button { cursor: pointer; }
+a { text-decoration: none; color: inherit; }
+.hidden { display: none !important; }
 
-/* Topbar */
-.topbar{height:60px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;background:var(--bg);border-bottom:1px solid var(--line);
-  position:fixed;top:0;width:100%;z-index:100}
-.brand{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-0.5px;}
-.brand span{color:var(--blue)}
-.pill{font-size:12px;padding:6px 10px;border-radius:6px;background:#1e2329;color:var(--txt);font-weight:600;border:1px solid var(--line);}
-.profile-btn{width:32px;height:32px;border-radius:50%;background:#1e2329;display:flex;justify-content:center;align-items:center;border:1px solid var(--line);color:var(--txt);font-size:16px;cursor:pointer;}
+/* App Layout */
+.app { min-height: 100vh; padding-bottom: 80px; }
+.topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: fixed; top: 0; width: 100%; z-index: 100; }
+.brand { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+.brand-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--primary), #3b82f6); border-radius: 6px; }
+.balance-pill { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); }
 
-/* Nav Bar Bottom */
-.bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#0b0e14;
-  border-top:1px solid var(--line);display:flex;justify-content:space-around;z-index:100}
-.navbtn{color:var(--muted);font-size:10px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;width:20%;transition:0.2s;padding-top:5px}
-.navbtn svg{width:22px;height:22px;margin-bottom:4px;fill:currentColor}
-.navbtn.active{color:var(--blue)}
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(18, 18, 23, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; z-index: 100; }
+.nav-item { color: var(--text-muted); font-size: 11px; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; transition: 0.2s; }
+.nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; }
+.nav-item.active { color: var(--primary); }
 
 /* Pages */
-.page{display:none;animation:fade 0.3s ease;padding-top:60px;}
-.page.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page { display: none; padding-top: 64px; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
 /* Home / Markets */
-.market-header{display:flex;justify-content:space-between;padding:12px 16px;font-size:11px;color:var(--muted);font-weight:600}
-.market-list{padding:0 16px}
-.m-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #121620;cursor:pointer;transition:0.2s}
-.m-row:active{background:#0e111a}
-.m-left{display:flex;align-items:center;gap:12px}
-.m-coin{font-weight:700;font-size:15px}
-.m-pair{font-size:11px;color:var(--muted)}
-.m-right{display:flex;align-items:center;gap:12px;text-align:right}
-.m-price{font-weight:600;font-size:15px}
-.m-change{font-size:12px;padding:4px 8px;border-radius:4px;font-weight:600;width:65px;text-align:center;}
-.bg-up{background:rgba(14,203,129,0.1);color:var(--up)}
-.bg-down{background:rgba(246,70,93,0.1);color:var(--down)}
-.sparkline{width:50px;height:20px;}
+.page-title { padding: 24px 20px 10px; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+.market-table { width: 100%; border-collapse: collapse; }
+.market-table th { text-align: left; padding: 12px 20px; font-size: 12px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+.market-table th:last-child, .market-table td:last-child { text-align: right; }
+.market-row { border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+.market-row:active { background: var(--surface-hover); }
+.market-row td { padding: 16px 20px; }
+.coin-info { display: flex; align-items: center; gap: 12px; }
+.coin-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--surface-hover); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--primary); }
+.coin-name { font-weight: 600; font-size: 15px; }
+.coin-pair { font-size: 12px; color: var(--text-muted); }
+.price-col { font-weight: 600; font-size: 15px; }
+.change-col { font-size: 13px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; }
+.bg-up { background: rgba(16, 185, 129, 0.1); color: var(--up); }
+.bg-down { background: rgba(239, 68, 68, 0.1); color: var(--down); }
 
-/* Trade Screen */
-.trade-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
-.trade-title{font-size:18px;font-weight:800}
-.trade-change{font-size:13px;font-weight:600;margin-left:8px}
-.coin-select{background:#1e2329;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;color:#fff;border:1px solid #2b3139}
-.tf-scroll{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;white-space:nowrap;scrollbar-width:none}
-.tf-scroll::-webkit-scrollbar{display:none}
-.tf-btn{padding:6px 12px;border-radius:6px;background:#1e2329;color:var(--muted);font-size:12px;font-weight:600;border:1px solid transparent}
-.tf-btn.active{background:#2b3139;color:var(--blue);border-color:#474d57}
+/* Trade */
+.trade-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.trade-title-area { display: flex; flex-direction: column; gap: 4px; }
+.trade-pair-name { font-size: 20px; font-weight: 700; }
+.trade-price-display { font-size: 24px; font-weight: 700; color: var(--up); }
+.trade-change-display { font-size: 13px; font-weight: 600; }
+#tvchart-container { height: 350px; width: 100%; border-bottom: 1px solid var(--border); }
+.trade-panel { padding: 20px; background: var(--surface); border-radius: 20px 20px 0 0; margin-top: -10px; position: relative; z-index: 2; }
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab { flex: 1; text-align: center; padding: 12px 0; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; }
+.tab.active { color: var(--text-main); border-bottom-color: var(--primary); }
+.input-group { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; margin-bottom: 16px; }
+.input-group input { flex: 1; font-size: 18px; font-weight: 600; }
+.input-group span { color: var(--text-muted); font-size: 14px; font-weight: 600; }
+.btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.btn-primary { background: var(--primary); color: #000; font-size: 16px; font-weight: 700; padding: 16px; border-radius: var(--radius); text-align: center; transition: 0.2s; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-danger { background: var(--down); color: #fff; font-size: 16px; font-weight: 700; padding: 16px; border-radius: var(--radius); text-align: center; transition: 0.2s; }
+.btn-danger:active { transform: scale(0.98); }
 
-/* Chart Container */
-#tvchart{width:100%;height:280px;background:var(--bg);position:relative}
-.chart-controls{position:absolute;right:10px;top:10px;display:flex;gap:5px;z-index:10}
-.chart-controls button{width:24px;height:24px;background:#1e2329;border-radius:4px;color:#fff;font-size:14px;display:flex;justify-content:center;align-items:center}
+/* Assets/Wallet */
+.assets-card { margin: 20px; background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.assets-label { font-size: 14px; color: var(--text-muted); display: flex; justify-content: space-between; }
+.assets-amt { font-size: 36px; font-weight: 700; margin: 8px 0; }
+.assets-sub { font-size: 13px; color: var(--text-muted); }
+.action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 20px; }
+.action-btn { background: var(--surface); border: 1px solid var(--border); padding: 16px 8px; border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; transition: 0.2s; }
+.action-btn:active { background: var(--surface-hover); }
+.action-btn svg { width: 24px; height: 24px; fill: var(--primary); }
 
-/* Trade Panel */
-.trade-panel{padding:16px;background:var(--card);border-top:1px solid var(--line);margin-top:10px}
-.tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:12px;scrollbar-width:none;}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:0.2s;white-space:nowrap;}
-.tab.active{color:var(--txt);border-bottom-color:var(--blue)}
-.input-box{background:#1e2329;border-radius:8px;padding:12px;margin-bottom:12px;display:flex;align-items:center;border:1px solid #2b3139}
-.input-box input{flex:1;color:#fff;font-size:16px;font-weight:600;padding:0;margin:0;width:100%}
-.input-box span{color:var(--muted);font-size:14px;font-weight:600}
-.dir-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.btn-buy{background:var(--up);color:#fff;font-size:16px;font-weight:800;padding:16px;border-radius:8px;text-align:center;transition:0.1s}
-.btn-sell{background:var(--down);color:#fff;font-size:16px;font-weight:800;padding:16px;border-radius:8px;text-align:center;transition:0.1s}
-.btn-buy:active,.btn-sell:active{transform:scale(0.98);opacity:0.9}
+/* Profile & Referral */
+.profile-header { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+.profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.profile-email { font-size: 13px; color: var(--text-muted); }
+.section-title { font-size: 16px; font-weight: 700; margin: 24px 20px 12px; }
+.ref-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 0 20px 20px; padding: 20px; }
+.ref-link-box { display: flex; gap: 8px; margin-top: 12px; }
+.ref-link-box input { flex: 1; background: var(--bg); border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: var(--primary); font-size: 13px; }
+.ref-link-box button { background: var(--primary); color: #000; padding: 0 16px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+.ref-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.ref-stat-box { background: var(--bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+.ref-stat-box .label { font-size: 12px; color: var(--text-muted); }
+.ref-stat-box .value { font-size: 20px; font-weight: 700; color: var(--up); margin-top: 4px; }
+.ref-levels { margin: 0 20px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ref-level-item { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.ref-level-item:last-child { border-bottom: none; }
+.profile-action-row { margin: 24px 20px; }
+.logout-btn { width: 100%; background: rgba(239, 68, 68, 0.1); color: var(--down); border: 1px solid rgba(239, 68, 68, 0.3); padding: 16px; border-radius: var(--radius); font-weight: 700; font-size: 15px; transition: 0.2s; }
+.logout-btn:active { background: rgba(239, 68, 68, 0.2); }
 
-/* Lists & Cards */
-.pos-card{background:var(--card);padding:12px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px;font-size:12px;}
-.pos-header{display:flex;justify-content:space-between;margin-bottom:8px;font-weight:700;}
-.pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;color:var(--muted);}
-.pos-grid div span{display:block;font-size:10px;}
-.pos-grid div b{color:var(--txt);font-size:12px;}
-
-/* Assets / Wallet */
-.assets-card{margin:16px;background:linear-gradient(135deg, #1e3c72, #2a5298);border-radius:16px;padding:20px;color:#fff;box-shadow:0 10px 20px rgba(0,0,0,0.5);}
-.assets-label{font-size:13px;opacity:0.9;display:flex;align-items:center;justify-content:space-between}
-.assets-amt{font-size:32px;font-weight:800;margin:8px 0}
-.assets-sub{font-size:12px;opacity:0.9}
-.asset-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 16px}
-.a-btn{background:var(--card);border:1px solid var(--line);padding:14px 8px;border-radius:12px;text-align:center;font-size:12px;font-weight:600;color:var(--txt);cursor:pointer;transition:0.2s}
-.a-btn:active{transform:scale(0.95)}
-.a-btn svg{width:24px;height:24px;fill:var(--blue);margin-bottom:6px}
-.account-list{padding:0 16px;margin-bottom:20px;}
-.acc-item{background:var(--card);padding:16px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-
-/* Perpetual Page */
-.perp-header{display:flex;justify-content:space-between;padding:10px 16px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);}
-.perp-grid{display:grid;grid-template-columns:1.1fr 1fr;border-bottom:1px solid var(--line);}
-.perp-left{padding:12px;border-right:1px solid var(--line);}
-.perp-right{padding:0;overflow:hidden;}
-.ob-row{display:flex;justify-content:space-between;padding:3px 8px;font-size:10px;font-weight:600;}
-.ob-row.up{color:var(--up);}
-.ob-row.down{color:var(--down);}
-.ls-btn{display:flex;background:#1e2329;border-radius:6px;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);}
-.ls-btn div{flex:1;text-align:center;padding:10px;font-weight:700;font-size:13px;cursor:pointer;}
-.ls-btn .long.active{background:var(--up);color:#fff;}
-.ls-btn .short.active{background:var(--down);color:#fff;}
-.perc-btns{display:flex;gap:6px;margin:10px 0;}
-.perc-btns div{flex:1;text-align:center;padding:6px 0;background:#1e2329;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--line);}
+/* Admin */
+.admin-card { background: var(--surface); border: 1px solid var(--border); margin: 16px 20px; padding: 16px; border-radius: var(--radius); font-size: 13px; }
+.admin-card b { color: var(--primary); }
 
 /* Modals */
-.modalBg{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:none;justify-content:center;align-items:flex-end;z-index:200}
-.modalBg.on{display:flex;animation:fade 0.2s}
-.modal{background:var(--card);width:100%;max-width:500px;border-radius:20px 20px 0 0;padding:20px;animation:slideUp 0.3s ease;max-height:90vh;overflow-y:auto}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.close-btn{color:var(--muted);font-size:24px;line-height:1}
-.warning-box{background:rgba(246,70,93,0.1);border:1px solid rgba(246,70,93,0.3);color:#f6465d;padding:12px;border-radius:8px;font-size:11px;margin-bottom:16px;line-height:1.4}
-.qr-box{background:#fff;padding:10px;border-radius:12px;width:fit-content;margin:0 auto 16px auto}
-.qr-box img{width:160px;height:160px;display:block}
-.addr-box{background:#1e2329;border-radius:8px;padding:12px;margin-bottom:16px;word-break:break-all;font-family:monospace;font-size:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2b3139}
-.copy-btn{color:var(--gold);font-weight:700;font-size:11px;padding:4px 8px;background:rgba(252,213,53,0.1);border-radius:4px;cursor:pointer}
-.countdown{font-size:26px;font-weight:800;text-align:center;color:var(--gold);font-family:monospace;margin:10px 0;letter-spacing:2px;}
-
-/* Referral UI */
-.ref-card{background:linear-gradient(135deg, #0f2027, #203a43, #2c5364);border-radius:12px;padding:16px;margin:16px;color:#fff;}
-.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
-.ref-box{background:rgba(255,255,255,0.1);padding:10px;border-radius:8px;text-align:center;}
-.ref-box div{font-size:10px;opacity:0.8;}
-.ref-box b{font-size:16px;display:block;margin-top:4px;}
-.ref-levels{background:var(--card);border-radius:12px;padding:16px;margin:0 16px 16px 16px;border:1px solid var(--line);}
-.ref-level-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1b2433;font-size:13px;}
-.ref-level-row:last-child{border:none;}
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: flex-end; z-index: 200; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: var(--surface); width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s ease; max-height: 90vh; overflow-y: auto; }
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { font-size: 18px; font-weight: 700; }
+.close-btn { font-size: 24px; color: var(--text-muted); cursor: pointer; }
+.warning-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--down); padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; line-height: 1.4; }
 
 /* Auth Screen */
-.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0a0e17;position:fixed;inset:0;z-index:500;overflow-y:auto;}
-.authbox{width:100%;max-width:400px;background:#0f1420;padding:30px 24px;border-radius:20px;border:1px solid #1f293d;box-shadow:0 0 50px rgba(41,98,255,0.1);}
-.auth-logo{text-align:center;margin-bottom:24px;}
-.auth-logo h2{margin:0;font-size:26px;font-weight:800;}
-.auth-logo span{color:#00d2ff;}
-.auth-logo p{margin:4px 0 0 0;font-size:12px;color:#8892a0;}
-.authbox input, .authbox select{width:100%;background:#161e2e;padding:14px;border-radius:10px;margin-bottom:12px;color:#fff;border:1px solid #25334d;font-size:13px;transition:0.2s;}
-.authbox input:focus{border-color:#00d2ff;box-shadow:0 0 0 3px rgba(0,210,255,0.1);}
-.auth-btn{width:100%;background:linear-gradient(90deg, #00d2ff, #2962ff);padding:14px;border-radius:10px;font-weight:700;font-size:15px;color:#fff;margin-top:8px;box-shadow:0 8px 20px rgba(41,98,255,0.3);transition:0.2s;}
-.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:#8892a0;}
-.auth-switch span{color:#00d2ff;cursor:pointer;font-weight:600;}
+.auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 500; overflow-y: auto; }
+.auth-box { width: 100%; max-width: 400px; background: var(--surface); padding: 32px 24px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.auth-logo { text-align: center; margin-bottom: 32px; }
+.auth-logo h1 { font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -1px; }
+.auth-logo h1 span { color: var(--primary); }
+.auth-logo p { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+.auth-input { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: var(--radius); margin-bottom: 16px; font-size: 14px; transition: 0.2s; }
+.auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1); }
+.auth-btn { width: 100%; background: var(--primary); color: #000; padding: 16px; border-radius: var(--radius); font-weight: 700; font-size: 15px; margin-top: 8px; transition: 0.2s; }
+.auth-btn:active { transform: scale(0.98); }
+.auth-switch { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); }
+.auth-switch span { color: var(--primary); cursor: pointer; font-weight: 600; }
+.auth-support { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.auth-support a { font-size: 13px; color: var(--primary); font-weight: 600; }
 
-/* Support Chat */
-.support-float{position:fixed;bottom:85px;right:16px;width:50px;height:50px;background:var(--blue);border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 4px 15px rgba(41,98,255,0.4);z-index:90;cursor:pointer}
-.support-float svg{width:28px;height:28px;fill:#fff}
-.chat-box{position:fixed;bottom:145px;right:16px;width:320px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);display:none;flex-direction:column;z-index:95}
-.chat-box.on{display:flex;animation:slideUp 0.2s}
-.chat-header{background:#1e2329;padding:12px;border-radius:16px 16px 0 0;font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center}
-.chat-body{padding:12px;max-height:280px;overflow-y:auto;font-size:13px;color:#d1d4dc;display:flex;flex-direction:column;gap:8px}
-.chat-msg{background:#1e2329;padding:10px 12px;border-radius:8px;border-bottom-left-radius:0;align-self:flex-start;max-width:85%;line-height:1.4;}
-.chat-msg.me{background:var(--blue);color:#fff;border-radius:8px;border-bottom-right-radius:0;align-self:flex-end;}
-.chat-options{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chat-opt{background:#2b3139;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #474d57}
-.chat-input-box{display:flex;padding:10px;border-top:1px solid var(--line);background:#1e2329;border-radius:0 0 16px 16px;}
-.chat-input-box input{flex:1;background:none;color:#fff;font-size:13px;}
-.chat-input-box button{color:var(--blue);font-weight:700;padding:0 10px;}
-.btn-wa{background:#229ED9;color:#fff;padding:10px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;display:block;text-decoration:none;margin-top:8px;}
+/* OTP Inputs */
+.otp-group { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+.otp-input { width: 45px; height: 50px; text-align: center; font-size: 20px; font-weight: 700; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); }
+.otp-input:focus { border-color: var(--primary); }
 
-/* OTP Box */
-.otp-box{display:flex;gap:8px;justify-content:center;margin:16px 0;}
-.otp-input{width:45px;height:50px;text-align:center;font-size:20px;font-weight:700;background:#1e2329;border:1px solid #2b3139;border-radius:8px;color:#fff;padding:0;}
-.otp-input:focus{border-color:var(--blue);}
-.otp-info{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5;}
+/* Toast */
+.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--surface); color: var(--text-main); padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
 <!-- Auth Screen -->
-<div id="auth" class="auth">
-  <div class="authbox">
+<div id="authScreen" class="auth-screen">
+  <div class="auth-box">
     <div class="auth-logo">
-      <h2>Crypto<span>Nest</span></h2>
-      <p>Invest • Trade • Grow</p>
+      <h1>Crypto<span>Nest</span></h1>
+      <p>Premium Digital Asset Exchange</p>
     </div>
     
-    <!-- Login Form -->
+    <!-- Login -->
     <div id="loginForm">
-      <input id="le" type="email" placeholder="Email Address">
-      <input id="lp" type="password" placeholder="Password">
-      <button class="auth-btn" id="loginBtn" onclick="signIn()">Log In</button>
-      <div style="text-align:right; margin-top:-5px; margin-bottom:15px;">
-        <span onclick="showForgotPassword()" style="font-size:12px; color:var(--muted); cursor:pointer;">Forgot Password?</span>
+      <input id="loginEmail" class="auth-input" type="email" placeholder="Email Address">
+      <input id="loginPass" class="auth-input" type="password" placeholder="Password">
+      <div style="text-align:right; margin-top:-10px; margin-bottom:16px;">
+        <span onclick="showForgotPassword()" style="font-size:12px; color:var(--text-muted); cursor:pointer;">Forgot Password?</span>
       </div>
-      <div class="auth-switch">Don't have an account? <span onclick="toggleAuth()">Register</span></div>
-      <div style="text-align:center; margin-top:20px; border-top:1px solid var(--line); padding-top:15px;">
-        <a href="https://t.me/EZpay_Zyloxc" target="_blank" style="font-size:12px; color:var(--blue); font-weight:600; text-decoration:none;">💬 Customer Support</a>
-      </div>
-    </div>
-    
-    <!-- Register Form (Step 1) -->
-    <div id="registerForm" class="hidden">
-      <input id="rn" type="text" placeholder="Full Name">
-      <input id="rm" type="tel" placeholder="Mobile Number">
-      <input id="re" type="email" placeholder="Email Address">
-      <input id="rp" type="password" placeholder="Password (min 6 chars)">
-      <input id="rref" type="text" placeholder="Referral Code (Optional)" style="text-transform:uppercase;">
-      <button class="auth-btn" id="registerBtn" onclick="requestOTP()">Send OTP</button>
-      <div class="auth-switch">Already have an account? <span onclick="toggleAuth()">Log In</span></div>
-      <div style="text-align:center; margin-top:20px; border-top:1px solid var(--line); padding-top:15px;">
-        <a href="https://t.me/EZpay_Zyloxc" target="_blank" style="font-size:12px; color:var(--blue); font-weight:600; text-decoration:none;">💬 Customer Support</a>
-      </div>
+      <button class="auth-btn" onclick="handleLogin()">Log In</button>
+      <div class="auth-switch">Don't have an account? <span onclick="toggleAuthForm('register')">Register</span></div>
+      <div class="auth-support"><a href="https://t.me/EZpay_Zyloxc" target="_blank">💬 Customer Support</a></div>
     </div>
 
-    <!-- OTP Verification (Step 2) -->
+    <!-- Register -->
+    <div id="registerForm" class="hidden">
+      <input id="regName" class="auth-input" type="text" placeholder="Full Name">
+      <input id="regMobile" class="auth-input" type="tel" placeholder="Mobile Number">
+      <input id="regEmail" class="auth-input" type="email" placeholder="Email Address">
+      <input id="regPass" class="auth-input" type="password" placeholder="Password (min 6 chars)">
+      <input id="regRef" class="auth-input" type="text" placeholder="Referral Code (Optional)">
+      <button class="auth-btn" onclick="requestOTP()">Send OTP</button>
+      <div class="auth-switch">Already have an account? <span onclick="toggleAuthForm('login')">Log In</span></div>
+      <div class="auth-support"><a href="https://t.me/EZpay_Zyloxc" target="_blank">💬 Customer Support</a></div>
+    </div>
+
+    <!-- OTP -->
     <div id="otpForm" class="hidden">
-      <div style="text-align:center;font-size:14px;font-weight:600;margin-bottom:4px;">Verify Your Email</div>
-      <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px;">We sent a 6-digit code to <b id="otpEmail" style="color:var(--blue);"></b></div>
-      <div class="otp-box">
-        <input class="otp-input" id="otp1" maxlength="1" oninput="otpNext(this,'otp2')" onkeydown="otpBack(event,this,'')">
-        <input class="otp-input" id="otp2" maxlength="1" oninput="otpNext(this,'otp3')" onkeydown="otpBack(event,this,'otp1')">
-        <input class="otp-input" id="otp3" maxlength="1" oninput="otpNext(this,'otp4')" onkeydown="otpBack(event,this,'otp2')">
-        <input class="otp-input" id="otp4" maxlength="1" oninput="otpNext(this,'otp5')" onkeydown="otpBack(event,this,'otp3')">
-        <input class="otp-input" id="otp5" maxlength="1" oninput="otpNext(this,'otp6')" onkeydown="otpBack(event,this,'otp4')">
-        <input class="otp-input" id="otp6" maxlength="1" oninput="otpNext(this,'')" onkeydown="otpBack(event,this,'otp5')">
+      <p style="text-align:center; font-size:14px; color:var(--text-muted); margin-bottom:8px;">Enter the 6-digit code sent to</p>
+      <p style="text-align:center; font-weight:600; color:var(--primary); margin-bottom:16px;" id="otpEmailDisplay"></p>
+      <div class="otp-group">
+        <input class="otp-input" id="otp1" maxlength="1" oninput="moveFocus(this,'otp2')">
+        <input class="otp-input" id="otp2" maxlength="1" oninput="moveFocus(this,'otp3')">
+        <input class="otp-input" id="otp3" maxlength="1" oninput="moveFocus(this,'otp4')">
+        <input class="otp-input" id="otp4" maxlength="1" oninput="moveFocus(this,'otp5')">
+        <input class="otp-input" id="otp5" maxlength="1" oninput="moveFocus(this,'otp6')">
+        <input class="otp-input" id="otp6" maxlength="1" oninput="moveFocus(this,'')">
       </div>
-      <div class="otp-info" id="otpInfo">Enter the code sent to your email</div>
-      <button class="auth-btn" id="otpVerifyBtn" onclick="verifyOTP()">Verify & Create Account</button>
-      <div class="auth-switch" style="margin-top:12px;">
-        <span onclick="resendOTP()" style="color:var(--gold);">Resend OTP</span> | 
-        <span onclick="backToRegister()" style="color:var(--muted);">Back</span>
+      <button class="auth-btn" id="verifyOtpBtn" onclick="verifyOTP()">Verify & Create Account</button>
+      <div class="auth-switch" style="margin-top:16px;">
+        <span onclick="requestOTP()" style="color:var(--gold);">Resend OTP</span> | 
+        <span onclick="toggleAuthForm('register')" style="color:var(--text-muted);">Back</span>
       </div>
     </div>
   </div>
 </div>
 
-<div id="app" class="app hidden">
+<!-- Main App -->
+<div id="mainApp" class="app hidden">
   <header class="topbar">
-    <div class="brand">Crypto<span>Nest</span></div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <div class="pill" id="userBalTop">0.00 USDT</div>
-      <div class="profile-btn" onclick="go('profile', document.querySelector('.navbtn[data-p=\'profile\']'))">👤</div>
-      <button onclick="logout()" style="color:var(--muted);font-size:18px;">↪</button>
-    </div>
+    <div class="brand"><div class="brand-icon"></div>CryptoNest</div>
+    <div class="balance-pill" id="topBarBalance">0.00 USDT</div>
   </header>
 
   <!-- HOME -->
-  <section id="home" class="page active">
-    <div style="padding:16px 16px 0 16px;font-size:18px;font-weight:700;">Markets</div>
-    <div class="market-header"><span>Pair</span><span>Price / 24h Change</span></div>
-    <div class="market-list" id="homeMarkets"></div>
+  <section id="page-home" class="page active">
+    <div class="page-title">Markets</div>
+    <table class="market-table">
+      <thead><tr><th>Pair</th><th>Price</th><th>24h Change</th></tr></thead>
+      <tbody id="marketListBody"></tbody>
+    </table>
   </section>
 
   <!-- TRADE -->
-  <section id="trade" class="page">
+  <section id="page-trade" class="page">
     <div class="trade-header">
-      <div style="display:flex;align-items:center;">
-        <span class="trade-title" id="tradePair">BTC/USDT</span>
-        <select id="coinSelect" class="coin-select" style="margin-left:10px;" onchange="changeCoin(this.value)"></select>
-        <span class="trade-change" id="tradeChange" style="margin-left:8px;">+0.00%</span>
+      <div class="trade-title-area">
+        <select id="tradeCoinSelect" class="trade-pair-name" style="background:none;border:none;color:var(--text-main);font-size:20px;font-weight:700;outline:none;" onchange="changeCoin(this.value)"></select>
+        <div class="trade-price-display" id="tradeCurrentPrice">0.00</div>
+        <div class="trade-change-display" id="tradeChangePercent">0.00%</div>
       </div>
     </div>
     
-    <div class="tf-scroll">
-      <button class="tf-btn" onclick="setTF('1m',this)">1m</button>
-      <button class="tf-btn" onclick="setTF('3m',this)">3m</button>
-      <button class="tf-btn active" onclick="setTF('5m',this)">5m</button>
-      <button class="tf-btn" onclick="setTF('15m',this)">15m</button>
-      <button class="tf-btn" onclick="setTF('30m',this)">30m</button>
-      <button class="tf-btn" onclick="setTF('1h',this)">1h</button>
-    </div>
-
-    <div id="tvchart">
-      <div class="chart-controls">
-        <button onclick="zoomChart(1.2)">+</button>
-        <button onclick="zoomChart(0.8)">-</button>
-      </div>
-      <canvas id="chartCanvas"></canvas>
+    <!-- TradingView Chart -->
+    <div id="tvchart-container">
+      <div id="tvchart"></div>
     </div>
 
     <div class="trade-panel">
       <div class="tabs">
         <div class="tab active" onclick="switchTradeTab('trade', this)">Trade</div>
-        <div class="tab" onclick="switchTradeTab('open', this)">Open Pos</div>
-        <div class="tab" onclick="switchTradeTab('closed', this)">History</div>
+        <div class="tab" onclick="switchTradeTab('open', this)">Open Positions</div>
+        <div class="tab" onclick="switchTradeTab('history', this)">History</div>
       </div>
       
       <div id="tradeForm">
-        <div class="input-box">
-          <input id="tradeAmt" type="number" placeholder="Amount (USDT)" value="10">
+        <div class="input-group">
+          <input id="tradeAmount" type="number" placeholder="Amount (USDT)" value="10">
           <span>USDT</span>
         </div>
-        <div class="dir-btns">
-          <button class="btn-buy" onclick="placeTrade('up')">▲ CALL</button>
-          <button class="btn-sell" onclick="placeTrade('down')">▼ PUT</button>
+        <div class="btn-container">
+          <button class="btn-primary" onclick="placeTrade('up')">▲ CALL</button>
+          <button class="btn-danger" onclick="placeTrade('down')">▼ PUT</button>
         </div>
       </div>
       
-      <div id="openList" class="hidden"></div>
-      <div id="closedList" class="hidden"></div>
+      <div id="openPositionsList" class="hidden"></div>
+      <div id="tradeHistoryList" class="hidden"></div>
     </div>
   </section>
 
   <!-- ASSETS / WALLET -->
-  <section id="wallet" class="page">
+  <section id="page-wallet" class="page">
     <div class="assets-card">
-      <div class="assets-label"><span>Total Assets (USDT)</span> <span>👁</span></div>
-      <div class="assets-amt" id="walletBal">0.00</div>
+      <div class="assets-label"><span>Total Assets</span> <span>USDT</span></div>
+      <div class="assets-amt" id="walletBalance">0.00</div>
       <div class="assets-sub">Today's PnL: 0.00 USDT</div>
     </div>
 
-    <div class="asset-actions">
-      <div class="a-btn" onclick="openModal('deposit')">
+    <div class="action-grid">
+      <div class="action-btn" onclick="openModal('deposit')">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>Deposit
       </div>
-      <div class="a-btn" onclick="openModal('withdraw')">
+      <div class="action-btn" onclick="openModal('withdraw')">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" transform="rotate(180 12 12)"/></svg>Withdraw
       </div>
-      <div class="a-btn" onclick="openModal('convert')">
+      <div class="action-btn" onclick="openModal('convert')">
         <svg viewBox="0 0 24 24"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>Convert
       </div>
-      <div class="a-btn" onclick="go('history', document.querySelector('.navbtn[data-p=\'history\']'))">
+      <div class="action-btn" onclick="go('history', document.querySelector('.nav-item[data-page=\'history\']'))">
         <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>History
       </div>
     </div>
   </section>
 
-  <!-- PERPETUAL -->
-  <section id="perpetual" class="page">
-    <div class="perp-header">
-      <span id="perpPair">BTC/USDT Perpetual</span>
-      <span>ℹ️</span>
-    </div>
-    <div class="perp-grid">
-      <div class="perp-left">
-        <div class="ls-btn">
-          <div class="long active" onclick="setPerpDir('long', this)">Long</div>
-          <div class="short" onclick="setPerpDir('short', this)">Short</div>
-        </div>
-        <div style="font-size:12px;margin-bottom:8px;">Margin</div>
-        <div class="input-box" style="margin-bottom:8px;">
-          <span style="color:var(--txt);font-size:14px;font-weight:700;" id="perpPrice">0.00</span>
-        </div>
-        <div class="input-box" style="margin-bottom:8px;">
-          <input type="number" id="perpQty" placeholder="Quantity">
-          <span>USDT</span>
-        </div>
-        <div class="perc-btns">
-          <div onclick="setPerpPct(25)">25%</div>
-          <div onclick="setPerpPct(50)">50%</div>
-          <div onclick="setPerpPct(75)">75%</div>
-          <div onclick="setPerpPct(100)">100%</div>
-        </div>
-        <div style="font-size:11px;margin-bottom:8px;">Avail: <b id="perpAvail">0.00</b> USDT</div>
-        
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
-          <span>Leverage</span><span id="levVal">20x</span>
-        </div>
-        <input type="range" id="levSlider" min="1" max="1000" value="20" oninput="$('levVal').textContent=this.value+'x'" style="width:100%;margin-bottom:12px;accent-color:var(--blue);">
-        
-        <button class="btn-buy" id="perpBtn" style="width:100%;padding:12px;font-size:14px;" onclick="placePerpTrade()">Buy Long</button>
-      </div>
-      <div class="perp-right" id="orderBook"></div>
-    </div>
-    <div style="padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--line);">Positions</div>
-    <div id="perpPositions" style="padding:10px;color:var(--muted);font-size:12px;"></div>
-  </section>
-
   <!-- HISTORY -->
-  <section id="history" class="page">
-    <div style="padding:16px;">
-      <h2 style="font-size:18px;margin-bottom:16px;">Transactions</h2>
-      <div id="historyList" style="display:flex;flex-direction:column;gap:10px;"></div>
-    </div>
+  <section id="page-history" class="page">
+    <div class="page-title">Transactions</div>
+    <div id="fullHistoryList" style="padding: 0 20px;"></div>
   </section>
 
   <!-- PROFILE & REFERRAL -->
-  <section id="profile" class="page">
-    <div style="padding:16px;">
-      <h2 style="font-size:18px;margin-bottom:16px;">My Profile</h2>
-      
-      <div class="ref-card">
-        <div style="font-size:12px;opacity:0.8;">My Unique ID</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-          <div id="myUid" style="font-size:20px;font-weight:800;letter-spacing:1px;">...</div>
-          <button onclick="copyUid()" style="background:rgba(255,255,255,0.2);padding:6px 12px;border-radius:6px;font-size:12px;">Copy</button>
+  <section id="page-profile" class="page">
+    <div class="profile-header">
+      <div class="profile-name" id="profName">User Name</div>
+      <div class="profile-email" id="profEmail">email@example.com</div>
+    </div>
+
+    <div class="section-title">Referral Program</div>
+    <div class="ref-card">
+      <div style="font-size:14px; font-weight:600; margin-bottom:8px;">Your Personal Link</div>
+      <div class="ref-link-box">
+        <input id="refLinkInput" type="text" readonly>
+        <button onclick="copyRefLink()">Copy</button>
+      </div>
+      <div class="ref-stats-grid">
+        <div class="ref-stat-box">
+          <div class="label">Total Referrals</div>
+          <div class="value" id="refCount">0</div>
         </div>
-        <div class="ref-stats">
-          <div class="ref-box"><div>Total Referrals</div><b id="refTotal">0</b></div>
-          <div class="ref-box"><div>Commission Earned</div><b id="refEarn" style="color:var(--up);">0.00</b></div>
+        <div class="ref-stat-box">
+          <div class="label">Commission Earned</div>
+          <div class="value" id="refCommission">0.00 USDT</div>
         </div>
       </div>
+    </div>
 
-      <div class="ref-levels">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Referral Levels (6 Levels)</div>
-        <div class="ref-level-row"><span>Level 1 (Direct)</span><span style="color:var(--gold);">4%</span></div>
-        <div class="ref-level-row"><span>Level 2</span><span style="color:var(--gold);">3%</span></div>
-        <div class="ref-level-row"><span>Level 3</span><span style="color:var(--gold);">2%</span></div>
-        <div class="ref-level-row"><span>Level 4</span><span style="color:var(--gold);">1%</span></div>
-        <div class="ref-level-row"><span>Level 5</span><span style="color:var(--gold);">0.5%</span></div>
-        <div class="ref-level-row"><span>Level 6</span><span style="color:var(--gold);">0.25%</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.4;">
-          When your referred friends deposit funds, you earn a commission based on the levels above. The commission is instantly added to your wallet.
-        </div>
-      </div>
+    <div class="section-title">Commission Levels</div>
+    <div class="ref-levels">
+      <div class="ref-level-item"><span>Level 1 (Direct)</span><span style="color:var(--gold); font-weight:600;">4%</span></div>
+      <div class="ref-level-item"><span>Level 2</span><span style="color:var(--gold); font-weight:600;">3%</span></div>
+      <div class="ref-level-item"><span>Level 3</span><span style="color:var(--gold); font-weight:600;">2%</span></div>
+      <div class="ref-level-item"><span>Level 4</span><span style="color:var(--gold); font-weight:600;">1%</span></div>
+      <div class="ref-level-item"><span>Level 5</span><span style="color:var(--gold); font-weight:600;">0.5%</span></div>
+      <div class="ref-level-item"><span>Level 6</span><span style="color:var(--gold); font-weight:600;">0.25%</span></div>
+    </div>
 
-      <h2 style="font-size:18px;margin:20px 0 16px 0;">Account Settings</h2>
-      <div class="input-box"><input id="pName" placeholder="Full Name"></div>
-      <div class="input-box"><input id="pMobile" placeholder="Mobile Number"></div>
-      <div class="input-box"><input id="pEmail" disabled style="opacity:0.6;"></div>
+    <div class="section-title">Account Settings</div>
+    <div style="padding: 0 20px;">
+      <input id="editName" class="auth-input" placeholder="Full Name">
+      <input id="editMobile" class="auth-input" placeholder="Mobile Number">
+      <button class="btn-primary" style="width:100%; margin-bottom:16px;" onclick="saveProfile()">Save Changes</button>
       
-      <h3 style="font-size:14px;margin:20px 0 10px 0;color:var(--gold);">Withdrawal Address (USDT)</h3>
-      <div class="input-box"><input id="pAddress" placeholder="Enter your USDT Address"></div>
-      <button class="btn-buy" style="width:100%;padding:12px;margin-bottom:10px;" onclick="saveAddress()">Save Address</button>
-
-      <button class="auth-btn" style="margin-top:10px;" onclick="saveProfile()">Save Changes</button>
+      <button class="logout-btn" onclick="handleLogout()">Log Out</button>
     </div>
   </section>
 
   <!-- ADMIN -->
-  <section id="admin" class="page">
-    <div style="padding:16px;">
-      <h2 style="color:var(--gold);margin-bottom:16px;">Admin Panel</h2>
-      
-      <div style="font-size:16px;font-weight:700;margin-bottom:10px;">Pending Requests</div>
-      <div id="admRequestsList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-
-      <div style="font-size:16px;font-weight:700;margin-bottom:10px;">All Users Data</div>
-      <div id="admUsersList" style="display:flex;flex-direction:column;gap:10px;"></div>
-    </div>
+  <section id="page-admin" class="page">
+    <div class="page-title" style="color:var(--gold);">Admin Panel</div>
+    <div class="section-title" style="margin-top:0;">Pending Requests</div>
+    <div id="adminPendingList" style="padding: 0 20px;"></div>
+    <div class="section-title">All Users</div>
+    <div id="adminUsersList" style="padding: 0 20px 40px;"></div>
   </section>
 
   <!-- Bottom Nav -->
-  <nav class="bottom">
-    <button class="navbtn active" onclick="go('home', this)" data-p="home">
+  <nav class="bottom-nav">
+    <div class="nav-item active" data-page="home" onclick="go('home', this)">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
-    </button>
-    <button class="navbtn" onclick="go('trade', this)" data-p="trade">
+    </div>
+    <div class="nav-item" data-page="trade" onclick="go('trade', this)">
       <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>Trade
-    </button>
-    <button class="navbtn" onclick="go('perpetual', this)" data-p="perpetual">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-4H8v-2h2V9h2v2h2v2h-2v4z"/></svg>Future
-    </button>
-    <button class="navbtn" onclick="go('wallet', this)" data-p="wallet">
+    </div>
+    <div class="nav-item" data-page="wallet" onclick="go('wallet', this)">
       <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Assets
-    </button>
-    <button class="navbtn hidden" id="navAdminBtn" onclick="go('admin', this)" data-p="admin">
+    </div>
+    <div class="nav-item" data-page="history" onclick="go('history', this)">
+      <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>History
+    </div>
+    <div class="nav-item" data-page="profile" onclick="go('profile', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>Profile
+    </div>
+    <div class="nav-item hidden" id="navAdmin" data-page="admin" onclick="go('admin', this)">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>Admin
-    </button>
+    </div>
   </nav>
 </div>
 
-<!-- Support Chat -->
-<div class="support-float" onclick="toggleChat()">
-  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-</div>
-<div class="chat-box" id="chatBox">
-  <div class="chat-header">AI Support <span class="close-btn" onclick="toggleChat()">×</span></div>
-  <div class="chat-body" id="chatBody"></div>
-  <div class="chat-input-box" id="chatInputBox" style="display:none;">
-    <input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter') sendChat()">
-    <button onclick="sendChat()">Send</button>
-  </div>
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-content" id="modalContent" onclick="event.stopPropagation()"></div>
 </div>
 
-<!-- Modal -->
-<div class="modalBg" id="modalBg" onclick="if(event.target===this)closeModal()">
-  <div class="modal" id="modalContent"></div>
-</div>
-<div id="toast" style="position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1e2329;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:0.3s;pointer-events:none;border:1px solid var(--line);"></div>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
 
+<!-- Libraries -->
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 /* ================= CONFIG ================= */
 const ADMIN_EMAIL = "kaitoreignx@gmail.com";
-const TELEGRAM_LINK = "https://t.me/EZpay_Zyloxc";
+const DOMAIN = "https://earnify.fun";
 const ADDRESSES = {
   ERC20: "0x2D24CC766D829a3acB9B9C8568D04007ac7D645e",
   TRC20: "TJxPeiysh2CCWAcBJzWipjQciEUKryw6v4",
@@ -485,30 +395,115 @@ const ADDRESSES = {
 };
 const SYMBOLS = ["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","ADAUSDT","DOGEUSDT","AVAXUSDT","LINKUSDT","TONUSDT","DOTUSDT","MATICUSDT","SHIBUSDT","LTCUSDT","TRXUSDT","UNIUSDT","ATOMUSDT","ETCUSDT","XLMUSDT","BCHUSDT","FILUSDT","NEARUSDT","APTUSDT","ARBUSDT","OPUSDT","INJUSDT","SUIUSDT","SEIUSDT","TIAUSDT","RNDRUSDT","FETUSDT","PEPEUSDT","WIFUSDT","ORDIUSDT","JUPUSDT","STRKUSDT","WLDUSDT","BONKUSDT","FLOKIUSDT","GALAUSDT"];
 
-// SUPABASE SETUP
 const SUPABASE_URL = "https://jnjbmzwxgugbdpiomdks.supabase.co";
 const SUPABASE_KEY = "sb_publishable_-6R2uRPbi8bwXKv5i4d8ow_aDXyUwAE";
-// Global access ke liye window object me daala hai
-window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let session = null;
-let currentUser = {};
-let coin = "BTCUSDT", interval = "5m", ticker = {};
-let currentPrice = 0;
-let chartData = [];
-let chartZoom = 1;
-let ws = null, perpWs = null;
-let perpDir = 'long';
+/* ================= STATE ================= */
+let currentUser = null;
+let currentCoin = "BTCUSDT";
+let tickerData = {};
+let tvWidget = null;
 let pendingOTP = null;
 
+/* ================= UTILS ================= */
 const $ = id => document.getElementById(id);
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.opacity="1"; t.style.transform="translateX(-50%) translateY(0)"; clearTimeout(window.__tt); window.__tt=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(-10px)";},2000); }
-function fmt(n){ return Number(n).toLocaleString(undefined,{maximumFractionDigits:6}); }
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+function fmt(n) { return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }); }
+function moveFocus(el, nextId) {
+  if (el.value.length === 1 && nextId) $(nextId).focus();
+}
 
-/* ================= EMAIL OTP INTEGRATION ================= */
-async function sendOTPEmail(email, otp){
-  try{
-    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+/* ================= AUTHENTICATION ================= */
+function toggleAuthForm(formName) {
+  $("loginForm").classList.add("hidden");
+  $("registerForm").classList.add("hidden");
+  $("otpForm").classList.add("hidden");
+  
+  if (formName === "login") $("loginForm").classList.remove("hidden");
+  if (formName === "register") $("registerForm").classList.remove("hidden");
+  if (formName === "otp") $("otpForm").classList.remove("hidden");
+}
+
+// Session Persistence
+function checkSession() {
+  const savedUser = localStorage.getItem("cryptonest_session");
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    enterApp();
+  }
+}
+
+async function handleLogin() {
+  const email = $("loginEmail").value.trim().toLowerCase();
+  const pass = $("loginPass").value;
+  if (!email || !pass) return toast("Please enter credentials.");
+
+  // Admin Check
+  if (email === ADMIN_EMAIL && pass === "Captain@2007") {
+    let { data: admin } = await supabaseClient.from('users').select('*').eq('email', email).maybeSingle();
+    if (!admin) {
+      await supabaseClient.from('users').insert([{ email, password: pass, name: "Admin", role: "admin", balance: 10000 }]);
+    }
+    currentUser = { email, role: "admin", balance: 10000, id: admin ? admin.id : "ADMIN" };
+    localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+    enterApp(); return;
+  }
+
+  // User Login - Using maybeSingle to avoid error if not found
+  const { data: user, error } = await supabaseClient.from('users').select('*').eq('email', email).eq('password', pass).maybeSingle();
+  
+  if (error) {
+    console.error("Login Error:", error);
+    return toast("Database error. Please try again.");
+  }
+  if (!user) return toast("Invalid email or password.");
+  
+  currentUser = user;
+  localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+  enterApp();
+}
+
+function handleLogout() {
+  localStorage.removeItem("cryptonest_session");
+  currentUser = null;
+  $("mainApp").classList.add("hidden");
+  $("authScreen").classList.remove("hidden");
+  toggleAuthForm("login");
+  $("loginEmail").value = "";
+  $("loginPass").value = "";
+}
+
+// Registration & OTP
+async function requestOTP() {
+  const name = $("regName").value.trim();
+  const mobile = $("regMobile").value.trim();
+  const email = $("regEmail").value.trim().toLowerCase();
+  const pass = $("regPass").value;
+  const refCode = $("regRef").value.trim();
+
+  if (!name || !mobile || !email || pass.length < 6) return toast("Fill all details (Pass min 6 chars).");
+
+  const { data: existing } = await supabaseClient.from('users').select('email').eq('email', email).maybeSingle();
+  if (existing) return toast("Email already registered.");
+
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  pendingOTP = { name, mobile, email, pass, refCode, otp };
+
+  toggleAuthForm("otp");
+  $("otpEmailDisplay").textContent = email;
+  document.querySelectorAll('.otp-input').forEach(i => i.value = "");
+  $("otp1").focus();
+
+  // Send Email via EmailJS
+  try {
+    await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -518,518 +513,523 @@ async function sendOTPEmail(email, otp){
         template_params: { to_email: email, otp_code: otp }
       })
     });
-    if(res.ok) return true;
-  }catch(e){ console.warn(e); }
-  return false;
+    toast("OTP sent to your email.");
+  } catch (e) {
+    console.warn("Email error", e);
+    toast("Error sending OTP. Check console.");
+  }
 }
 
-function otpNext(el, nextId){ if(el.value.length === 1 && nextId) $(nextId).focus(); }
-function otpBack(e, el, prevId){ if(e.key === "Backspace" && el.value === "" && prevId) $(prevId).focus(); }
-
-async function requestOTP(){
-  const n=$("rn").value.trim(), m=$("rm").value.trim(), e=$("re").value.trim().toLowerCase();
-  const p=$("rp").value;
-  if(!n||!m||!e||p.length<6) return toast("Fill all details (Pass min 6 chars).");
-
-  try {
-    const { data: existing, error } = await window.supabaseClient.from('users').select('email').eq('email', e).maybeSingle();
-    if(existing) return toast("Email already registered.");
-  } catch(err) { console.log(err); }
-
-  const otp = String(Math.floor(100000 + Math.random()*900000));
-  pendingOTP = { name:n, mobile:m, email:e, pass:p, otp:otp, created:Date.now() };
-  
-  $("registerForm").classList.add("hidden");
-  $("otpForm").classList.remove("hidden");
-  $("otpEmail").textContent = e;
-  for(let i=1;i<=6;i++) $("otp"+i).value = "";
-  $("otp1").focus();
-
-  await sendOTPEmail(e, otp);
-  toast("OTP sent to your email.");
-}
-
-function backToRegister(){
-  $("otpForm").classList.add("hidden");
-  $("registerForm").classList.remove("hidden");
-  pendingOTP = null;
-}
-
-async function verifyOTP(){
-  if(!pendingOTP) return toast("Session expired. Register again.");
+async function verifyOTP() {
+  if (!pendingOTP) return toast("Session expired.");
   let entered = "";
-  for(let i=1;i<=6;i++) entered += $("otp"+i).value;
-  if(entered.length !== 6) return toast("Enter the full 6-digit code.");
-  
-  if(entered !== pendingOTP.otp){
-    $("otpInfo").textContent = "Incorrect code. Try again.";
-    $("otpInfo").style.color = "var(--down)";
+  for (let i = 1; i <= 6; i++) entered += $(`otp${i}`).value;
+  if (entered !== pendingOTP.otp) return toast("Incorrect OTP.");
+
+  const btn = $("verifyOtpBtn"); btn.textContent = "Creating..."; btn.disabled = true;
+
+  // Handle Referral
+  let referrerId = null;
+  if (pendingOTP.refCode) {
+    const { data: refUser } = await supabaseClient.from('users').select('id').eq('id', pendingOTP.refCode).maybeSingle();
+    if (refUser) referrerId = refUser.id;
+  }
+
+  const { data: newUser, error } = await supabaseClient.from('users').insert([{
+    name: pendingOTP.name, mobile: pendingOTP.mobile, email: pendingOTP.email, password: pendingOTP.pass, role: "user", referred_by: referrerId
+  }]).select().single();
+
+  if (error) {
+    toast("Error: " + error.message);
+    btn.textContent = "Verify & Create Account"; btn.disabled = false;
     return;
   }
-  
-  const btn = $("otpVerifyBtn"); btn.textContent = "Creating..."; btn.disabled = true;
 
-  const newUser = {
-    email: pendingOTP.email, password: pendingOTP.pass, name: pendingOTP.name, mobile: pendingOTP.mobile, role: "user"
-  };
-  
-  const { error } = await window.supabaseClient.from('users').insert([newUser]);
-  
-  if(error) { 
-    toast("Registration failed: " + error.message); 
-  } else {
-    toast("Account created successfully!");
-    pendingOTP = null;
-    backToRegister();
-    $("loginForm").classList.remove("hidden");
-    ["rn","rm","re","rp","rref"].forEach(id => $(id).value = "");
-  }
+  toast("Account created! Please log in.");
+  $("loginEmail").value = pendingOTP.email;
+  $("loginPass").value = pendingOTP.pass;
+  pendingOTP = null;
+  toggleAuthForm("login");
   btn.textContent = "Verify & Create Account"; btn.disabled = false;
 }
 
-/* ================= AUTH & REFERRAL ================= */
-function toggleAuth(){ 
-  $("loginForm").classList.toggle("hidden"); 
-  $("registerForm").classList.toggle("hidden");
-  $("otpForm").classList.add("hidden");
-}
-
-function showForgotPassword(){
+// Forgot Password
+function showForgotPassword() {
   $("modalContent").innerHTML = `
-    <div class="modal-title">Reset Password <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter your registered Email</div>
-    <div class="input-box"><input id="resetEmail" type="email" placeholder="Email Address"></div>
-    <button class="auth-btn" onclick="openResetPopup()">Verify Email</button>
+    <div class="modal-header"><div class="modal-title">Reset Password</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <input id="resetEmail" class="auth-input" type="email" placeholder="Registered Email">
+    <button class="auth-btn" onclick="sendResetOTP()">Send OTP</button>
   `;
-  $("modalBg").classList.add("on");
+  $("modalOverlay").classList.add("active");
 }
 
-async function openResetPopup(){
+async function sendResetOTP() {
   const email = $("resetEmail").value.trim().toLowerCase();
-  const { data } = await window.supabaseClient.from('users').select('email').eq('email', email).single();
-  if(!data) return toast("Email not found.");
-  
-  $("modalContent").innerHTML = `
-    <div class="modal-title">Verify Code <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div class="warning-box" style="background:rgba(252,213,53,0.1);border-color:rgba(252,213,53,0.3);color:var(--gold);">
-      🔐 For security, enter the verification code. If you don't have it, contact Customer Support.
-    </div>
-    <div class="input-box"><input id="resetCode" type="text" placeholder="Enter 6-digit code" maxlength="6" style="text-align:center;font-size:20px;letter-spacing:8px;"></div>
-    <div class="input-box"><input id="newPass" type="password" placeholder="New Password (min 6 chars)"></div>
-    <button class="auth-btn" onclick="confirmResetPassword('${email}')">Reset Password</button>
-  `;
-}
+  const { data } = await supabaseClient.from('users').select('email').eq('email', email).maybeSingle();
+  if (!data) return toast("Email not found.");
 
-async function confirmResetPassword(email){
-  const code = $("resetCode").value.trim();
-  const newPass = $("newPass").value;
-  
-  if(code !== "098765") return toast("Invalid verification code. Contact Admin.");
-  if(newPass.length < 6) return toast("Password must be at least 6 characters.");
-  
-  await window.supabaseClient.from('users').update({ password: newPass }).eq('email', email);
-  closeModal();
-  toast("Password reset successfully! Please log in.");
-  $("le").value = email;
-}
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  window.resetOTP = { email, otp };
 
-async function signIn(){
-  const e=$("le").value.trim().toLowerCase(), p=$("lp").value;
-  if(!e||!p) return toast("Enter credentials.");
-
-  if(e===ADMIN_EMAIL && p==="Captain@2007"){
-    let { data: admin } = await window.supabaseClient.from('users').select('*').eq('email', e).maybeSingle();
-    if(!admin){
-      await window.supabaseClient.from('users').insert([{ email: e, password: p, name: "Admin", role: "admin", balance: 10000 }]);
-    }
-    session = e; currentUser = { email: e, role: "admin", balance: 10000 };
-    enter(); return;
+  try {
+    await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: "service_oc75guu",
+        template_id: "template_5751mdd",
+        user_id: "54KKOYgNGmL9IAuvh",
+        template_params: { to_email: email, otp_code: otp }
+      })
+    });
+    $("modalContent").innerHTML = `
+      <div class="modal-header"><div class="modal-title">Verify & Reset</div><div class="close-btn" onclick="closeModal()">×</div></div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Enter the code sent to <b>${email}</b> and your new password.</p>
+      <input id="resetOtpInput" class="auth-input" type="text" placeholder="6-digit OTP" maxlength="6">
+      <input id="newPassInput" class="auth-input" type="password" placeholder="New Password (min 6 chars)">
+      <button class="auth-btn" onclick="confirmResetPassword()">Reset Password</button>
+    `;
+    toast("OTP sent successfully.");
+  } catch (e) {
+    toast("Failed to send OTP.");
   }
+}
 
-  const { data: user } = await window.supabaseClient.from('users').select('*').eq('email', e).eq('password', p).single();
-  if(!user) return toast("Invalid email or password.");
+async function confirmResetPassword() {
+  const inputOtp = $("resetOtpInput").value.trim();
+  const newPass = $("newPassInput").value;
+  if (inputOtp !== window.resetOTP.otp) return toast("Invalid OTP.");
+  if (newPass.length < 6) return toast("Password min 6 chars.");
+
+  await supabaseClient.from('users').update({ password: newPass }).eq('email', window.resetOTP.email);
+  toast("Password reset successfully! Please login.");
+  closeModal();
+  $("loginEmail").value = window.resetOTP.email;
+}
+
+/* ================= APP LOGIC ================= */
+function enterApp() {
+  $("authScreen").classList.add("hidden");
+  $("mainApp").classList.remove("hidden");
   
-  session = e; currentUser = user; enter();
-}
+  if (currentUser.role === "admin") $("navAdmin").classList.remove("hidden");
+  else $("navAdmin").classList.add("hidden");
 
-function logout(){
-  session = null; currentUser = {};
-  if(ws){ try{ws.close();}catch(e){} ws=null; }
-  if(perpWs){ try{perpWs.close();}catch(e){} perpWs=null; }
-  $("app").classList.add("hidden"); $("auth").classList.remove("hidden");
-  $("loginForm").classList.remove("hidden");
-  $("registerForm").classList.add("hidden");
-  $("otpForm").classList.add("hidden");
-  pendingOTP = null;
-}
-
-function enter(){
-  $("auth").classList.add("hidden"); $("app").classList.remove("hidden");
-  if(currentUser.role==="admin"){ $("navAdminBtn").classList.remove("hidden"); } else { $("navAdminBtn").classList.add("hidden"); }
-  renderAll(); startMarket();
-  if(currentUser.role==="admin") go('admin', $("navAdminBtn"));
-  else go('home', document.querySelector('.navbtn[data-p="home"]'));
-}
-
-function go(id, btn){
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  $(id).classList.add("active");
-  document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));
-  if(btn) btn.classList.add("active");
+  updateBalanceUI();
+  loadMarkets();
+  setInterval(loadMarkets, 10000);
   
-  if(id==="trade"){ setTimeout(()=>{ loadChart(); }, 50); }
-  if(id==="home") renderMarkets();
-  if(id==="wallet") renderWallet();
-  if(id==="history") renderHistory();
-  if(id==="admin") renderAdmin();
-  if(id==="perpetual") renderPerp();
-  if(id==="profile") renderProfile();
+  go('home', document.querySelector('.nav-item[data-page="home"]'));
 }
 
-/* ================= RENDER UI ================= */
-async function renderAll(){
-  if(!currentUser.email) return;
-  $("userBalTop").textContent = (currentUser.balance||0).toFixed(2) + " USDT";
-  $("walletBal").textContent = (currentUser.balance||0).toFixed(2);
-  $("perpAvail").textContent = (currentUser.balance||0).toFixed(2);
-  renderMarkets(); renderWallet(); renderProfile();
-  if(currentUser.role === 'admin') renderAdmin();
+function go(pageId, el) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  $(`page-${pageId}`).classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  if (el) el.classList.add("active");
+
+  if (pageId === "trade") loadChart(currentCoin);
+  if (pageId === "history") renderFullHistory();
+  if (pageId === "profile") renderProfile();
+  if (pageId === "admin") renderAdmin();
 }
 
-function genSparkline(up){
-  const color = up ? "var(--up)" : "var(--down)";
-  let path = "M0,10 ";
-  for(let i=1; i<=5; i++){ path += `L${i*10},${Math.random()*15+2} `; }
-  return `<svg class="sparkline" viewBox="0 0 50 20" preserveAspectRatio="none"><path d="${path}" fill="none" stroke="${color}" stroke-width="1.5"/></svg>`;
+function updateBalanceUI() {
+  $("topBarBalance").textContent = fmt(currentUser.balance || 0) + " USDT";
+  $("walletBalance").textContent = fmt(currentUser.balance || 0);
 }
 
-function renderMarkets(){
-  let opts = SYMBOLS.map(s => `<option value="${s}">${s.replace("USDT","/USDT")}</option>`).join("");
-  $("coinSelect").innerHTML = opts;
-  $("coinSelect").value = coin;
+/* ================= MARKETS ================= */
+async function loadMarkets() {
+  try {
+    const res = await fetch("https://data-api.binance.vision/api/v3/ticker/24hr?symbols=" + encodeURIComponent(JSON.stringify(SYMBOLS)));
+    const data = await res.json();
+    data.forEach(item => tickerData[item.symbol] = item);
+    renderMarketList();
+    if ($("page-trade").classList.contains("active")) updateTradeHeader();
+  } catch (e) {}
+}
 
-  const html = SYMBOLS.map(s=>{
-    const d = ticker[s];
-    const pc = d ? +d.priceChangePercent : (Math.random()*4-2);
+function renderMarketList() {
+  const tbody = $("marketListBody");
+  tbody.innerHTML = SYMBOLS.map(sym => {
+    const coin = sym.replace("USDT", "");
+    const d = tickerData[sym] || { lastPrice: 0, priceChangePercent: 0 };
+    const pc = parseFloat(d.priceChangePercent);
     const cls = pc >= 0 ? "bg-up" : "bg-down";
     const sign = pc >= 0 ? "+" : "";
-    return `<div class="m-row" onclick="openTrade('${s}')">
-      <div class="m-left"><div><div class="m-coin">${s.replace("USDT","")}</div><div class="m-pair">USDT</div></div></div>
-      <div class="m-right">
-        ${genSparkline(pc>=0)}
-        <div style="text-align:right;"><div class="m-price">${d ? fmt(d.lastPrice) : '...'}</div><div class="m-change ${cls}">${sign}${pc.toFixed(2)}%</div></div>
-      </div>
-    </div>`;
-  }).join("");
-  $("homeMarkets").innerHTML = html;
-}
-
-function renderWallet(){ $("walletBal").textContent = (currentUser.balance||0).toFixed(2); }
-
-async function renderProfile(){
-  if(!currentUser.email) return;
-  $("myUid").textContent = currentUser.id ? currentUser.id.slice(0,8).toUpperCase() : "N/A";
-  $("pName").value = currentUser.name || "";
-  $("pMobile").value = currentUser.mobile || "";
-  $("pEmail").value = currentUser.email || "";
-  $("pAddress").value = currentUser.address || "";
-}
-
-async function saveProfile(){
-  const n = $("pName").value, m = $("pMobile").value;
-  await window.supabaseClient.from('users').update({ name: n, mobile: m }).eq('email', currentUser.email);
-  currentUser.name = n; currentUser.mobile = m;
-  toast("Profile updated!"); renderProfile();
-}
-
-async function saveAddress(){
-  const addr = $("pAddress").value.trim();
-  if(!addr) return toast("Enter address first.");
-  await window.supabaseClient.from('users').update({ address: addr }).eq('email', currentUser.email);
-  currentUser.address = addr;
-  toast("Address saved successfully!");
-}
-
-function copyUid(){ if(currentUser.id) { navigator.clipboard.writeText(currentUser.id); toast("UID Copied!"); } }
-
-/* ================= LIVE DATA ================= */
-function startMarket(){
-  loadTicker();
-  setInterval(loadTicker, 10000);
-}
-async function api(url){ const r=await fetch(url); if(!r.ok) throw Error(); return r.json(); }
-async function loadTicker(){
-  try{
-    const q = encodeURIComponent(JSON.stringify(SYMBOLS));
-    const d = await api("https://data-api.binance.vision/api/v3/ticker/24hr?symbols="+q);
-    d.forEach(x=>ticker[x.symbol]=x);
-    renderMarkets();
-  }catch(e){}
-}
-
-function openTrade(sym){
-  coin = sym;
-  go('trade', document.querySelector('.navbtn[data-p="trade"]'));
-  $("tradePair").textContent = sym.replace("USDT","/USDT");
-  loadChart();
-}
-
-function changeCoin(sym){ coin = sym; $("tradePair").textContent = sym.replace("USDT","/USDT"); $("perpPair").textContent = sym.replace("USDT","/USDT") + " Perpetual"; loadChart(); startPerpWS(); }
-function setTF(tf, btn){ interval = tf; document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active")); if(btn) btn.classList.add("active"); loadChart(); }
-function zoomChart(mult){ chartZoom *= mult; if(chartZoom < 0.5) chartZoom = 0.5; if(chartZoom > 3) chartZoom = 3; drawChart(); }
-
-async function loadChart(){
-  if(!$("trade").classList.contains("active")) return;
-  try{
-    const d = await api(`https://data-api.binance.vision/api/v3/klines?symbol=${coin}&interval=${interval}&limit=100`);
-    chartData = d.map(x=> ({ time: x[0], open: +x[1], high: +x[2], low: +x[3], close: +x[4] }));
-    currentPrice = chartData[chartData.length-1].close;
-    drawChart();
     
-    if(ws) ws.close();
-    ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coin.toLowerCase()}@kline_${interval}`);
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      if(msg.k){
-        const k = msg.k;
-        const newCandle = { time: k.t, open: +k.o, high: +k.h, low: +k.l, close: +k.c };
-        const last = chartData[chartData.length-1];
-        if(last && last.time === newCandle.time){ chartData[chartData.length-1] = newCandle; }
-        else { chartData.push(newCandle); if(chartData.length>100) chartData.shift(); }
-        currentPrice = newCandle.close;
-        drawChart();
-      }
-    };
-  }catch(e){}
+    return `<tr class="market-row" onclick="openTrade('${sym}')">
+      <td>
+        <div class="coin-info">
+          <div class="coin-icon">${coin.charAt(0)}</div>
+          <div><div class="coin-name">${coin}</div><div class="coin-pair">USDT</div></div>
+        </div>
+      </td>
+      <td class="price-col">${fmt(d.lastPrice)}</td>
+      <td><span class="change-col ${cls}">${sign}${pc.toFixed(2)}%</span></td>
+    </tr>`;
+  }).join("");
 }
 
-function drawChart(){
-  const canvas = $("chartCanvas"); if(!canvas) return;
-  const ctx = canvas.getContext("2d"); const rect = canvas.parentElement.getBoundingClientRect(); const ratio = window.devicePixelRatio || 1;
-  canvas.width = rect.width * ratio; canvas.height = rect.height * ratio;
-  canvas.style.width = rect.width + 'px'; canvas.style.height = rect.height + 'px';
-  ctx.scale(ratio, ratio);
-  const W = rect.width, H = rect.height;
-  ctx.clearRect(0, 0, W, H);
-  if(chartData.length === 0) return;
-  const shown = Math.floor(chartData.length / chartZoom);
-  const visible = chartData.slice(chartData.length - shown);
-  let min = Infinity, max = -Infinity;
-  visible.forEach(c => { if(c.low < min) min = c.low; if(c.high > max) max = c.high; });
-  const range = (max - min) || 1;
-  const padTop = 20, padBot = 20, padRight = 60; const chartH = H - padTop - padBot; const chartW = W - padRight;
-  ctx.strokeStyle = "#1c2230"; ctx.lineWidth = 1;
-  for(let i=0;i<=4;i++){ const y = padTop + i*chartH/4; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(chartW,y); ctx.stroke(); }
-  const step = chartW / visible.length; const candleW = Math.max(2, step * 0.7);
-  visible.forEach((c, i) => {
-    const x = i * step + step/2;
-    const yO = padTop + (max - c.open)/range * chartH; const yC = padTop + (max - c.close)/range * chartH;
-    const yH = padTop + (max - c.high)/range * chartH; const yL = padTop + (max - c.low)/range * chartH;
-    const color = c.close >= c.open ? "#0ecb81" : "#f6465d";
-    ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, yH); ctx.lineTo(x, yL); ctx.stroke();
-    ctx.fillStyle = color; ctx.fillRect(x - candleW/2, Math.min(yO, yC), candleW, Math.max(1, Math.abs(yC - yO)));
-  });
+function openTrade(sym) {
+  currentCoin = sym;
+  go('trade', document.querySelector('.nav-item[data-page="trade"]'));
+  $("tradeCoinSelect").value = sym;
+  loadChart(sym);
 }
 
-/* ================= BINARY TRADE ================= */
-function switchTradeTab(type, el){
-  document.querySelectorAll('.trade-panel .tab').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-  $("tradeForm").classList.add("hidden"); $("openList").classList.add("hidden"); $("closedList").classList.add("hidden");
-  if(type==='trade') $("tradeForm").classList.remove("hidden");
-  if(type==='open'){ $("openList").classList.remove("hidden"); renderTradeList(); }
-  if(type==='closed'){ $("closedList").classList.remove("hidden"); renderTradeList(); }
-}
-
-function renderTradeList(){
-  $("openList").innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;">No open positions.</div>';
-  $("closedList").innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;">No closed history.</div>';
-}
-
-async function placeTrade(dir){
-  const amt = +$("tradeAmt").value;
-  if(!amt || amt<=0) return toast("Enter amount.");
-  if(amt > currentUser.balance) return toast("Insufficient balance.");
+/* ================= TRADINGVIEW CHART ================= */
+function loadChart(symbol) {
+  $("tvchart").innerHTML = "";
+  if (tvWidget) tvWidget = null;
   
+  tvWidget = new TradingView.widget({
+    "width": "100%",
+    "height": 350,
+    "symbol": "BINANCE:" + symbol,
+    "interval": "15",
+    "timezone": "Etc/UTC",
+    "theme": "dark",
+    "style": "1",
+    "locale": "en",
+    "toolbar_bg": "#121217",
+    "enable_publishing": false,
+    "hide_side_toolbar": true,
+    "allow_symbol_change": false,
+    "container_id": "tvchart"
+  });
+  updateTradeHeader();
+}
+
+function updateTradeHeader() {
+  const d = tickerData[currentCoin];
+  if (!d) return;
+  const pc = parseFloat(d.priceChangePercent);
+  $("tradeCurrentPrice").textContent = "$" + fmt(d.lastPrice);
+  $("tradeCurrentPrice").style.color = pc >= 0 ? "var(--up)" : "var(--down)";
+  $("tradeChangePercent").textContent = (pc >= 0 ? "+" : "") + pc.toFixed(2) + "%";
+  $("tradeChangePercent").style.color = pc >= 0 ? "var(--up)" : "var(--down)";
+}
+
+function changeCoin(sym) {
+  currentCoin = sym;
+  loadChart(sym);
+}
+
+function switchTradeTab(tab, el) {
+  document.querySelectorAll('.trade-panel .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  $("tradeForm").classList.add("hidden");
+  $("openPositionsList").classList.add("hidden");
+  $("tradeHistoryList").classList.add("hidden");
+  
+  if (tab === "trade") $("tradeForm").classList.remove("hidden");
+  if (tab === "open") { $("openPositionsList").classList.remove("hidden"); $("openPositionsList").innerHTML = '<p style="color:var(--text-muted);text-align:center;">No open positions.</p>'; }
+  if (tab === "history") { $("tradeHistoryList").classList.remove("hidden"); $("tradeHistoryList").innerHTML = '<p style="color:var(--text-muted);text-align:center;">No history.</p>'; }
+}
+
+async function placeTrade(dir) {
+  const amt = parseFloat($("tradeAmount").value);
+  if (!amt || amt <= 0) return toast("Enter amount.");
+  if (amt > currentUser.balance) return toast("Insufficient balance.");
+
   const newBal = currentUser.balance - amt;
-  await window.supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
-  currentUser.balance = newBal; renderAll();
+  await supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
+  
+  currentUser.balance = newBal;
+  localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+  updateBalanceUI();
   toast(`Trade placed: ${dir.toUpperCase()}`);
 }
 
-/* ================= PERPETUAL FUTURES ================= */
-function setPerpDir(dir, el){
-  perpDir = dir; document.querySelectorAll('.ls-btn div').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-  $("perpBtn").textContent = dir === 'long' ? 'Buy Long' : 'Sell Short';
-  $("perpBtn").className = dir === 'long' ? 'btn-buy' : 'btn-sell';
-}
-function setPerpPct(pct){ $("perpQty").value = ((currentUser.balance * pct) / 100).toFixed(2); }
-
-async function placePerpTrade(){
-  const amt = +$("perpQty").value;
-  if(!amt || amt <= 0) return toast("Enter amount");
-  if(amt > currentUser.balance) return toast("Insufficient balance");
-  
-  const newBal = currentUser.balance - amt;
-  await window.supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
-  currentUser.balance = newBal; renderAll();
-  toast(perpDir.toUpperCase() + " position opened.");
+/* ================= MODALS (Deposit / Withdraw / Convert) ================= */
+function openModal(type) {
+  if (type === "deposit") openDepositModal();
+  if (type === "withdraw") openWithdrawModal();
+  if (type === "convert") openConvertModal();
 }
 
-function startPerpWS(){
-  if(perpWs) perpWs.close();
-  perpWs = new WebSocket(`wss://stream.binance.com:9443/ws/${coin.toLowerCase()}@depth20@100ms`);
-  perpWs.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-    if(msg.bids && msg.asks){
-      let obHtml = "";
-      for(let i=4; i>=0; i--) { if(msg.asks[i]) obHtml += `<div class="ob-row up"><span>${fmt(msg.asks[i][0])}</span><span>${fmt(msg.asks[i][1])}</span></div>`; }
-      const mid = (parseFloat(msg.bids[0][0]) + parseFloat(msg.asks[0][0])) / 2;
-      obHtml += `<div class="ob-row" style="padding:5px 8px;font-size:12px;color:var(--down);font-weight:800;background:#1e2329;">${fmt(mid)}</div>`;
-      for(let i=0; i<5; i++) { if(msg.bids[i]) obHtml += `<div class="ob-row down"><span>${fmt(msg.bids[i][0])}</span><span>${fmt(msg.bids[i][1])}</span></div>`; }
-      $("orderBook").innerHTML = obHtml;
-    }
-  };
-}
-function renderPerp(){ $("perpAvail").textContent = (currentUser.balance||0).toFixed(2); startPerpWS(); }
-
-/* ================= DEPOSIT / WITHDRAW ================= */
-function openModal(type){
-  if(type === 'deposit') openDepositStep1();
-  if(type === 'withdraw') openWithdraw();
+function closeModal(e) {
+  if (e && e.target !== $("modalOverlay") && !e.target.classList.contains("close-btn")) return;
+  $("modalOverlay").classList.remove("active");
 }
 
-function openDepositStep1(){
+function openDepositModal() {
   $("modalContent").innerHTML = `
-    <div class="modal-title">Deposit USDT <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter Amount</div>
-    <div class="input-box"><input id="depAmt" type="number" placeholder="Amount" value="100"><span>USDT</span></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select Network</div>
-    <select id="depNet" class="input-box" style="width:100%;color:#fff;appearance:none;font-size:14px;">
-      <option value="ERC20">ERC-20 (Ethereum)</option><option value="TRC20">TRC-20 (Tron)</option><option value="BEP20">BEP-20 (BSC)</option>
+    <div class="modal-header"><div class="modal-title">Deposit USDT</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <div class="input-group"><input id="depAmt" type="number" placeholder="Amount" value="100"><span>USDT</span></div>
+    <select id="depNet" class="auth-input" style="margin-bottom:16px;">
+      <option value="ERC20">ERC-20 (Ethereum)</option>
+      <option value="TRC20">TRC-20 (Tron)</option>
+      <option value="BEP20">BEP-20 (BSC)</option>
     </select>
-    <button class="btn-buy" style="width:100%;margin-top:10px;" onclick="openDepositStep2()">Next</button>
+    <button class="btn-primary" onclick="showDepositAddress()">Next</button>
   `;
-  $("modalBg").classList.add("on");
+  $("modalOverlay").classList.add("active");
 }
 
-function openDepositStep2(){
-  const amt = +$("depAmt").value; const net = $("depNet").value;
-  if(!amt || amt<=0) return toast("Enter valid amount");
+function showDepositAddress() {
+  const amt = $("depAmt").value;
+  const net = $("depNet").value;
+  if (!amt || amt <= 0) return toast("Enter valid amount.");
+  
   const addr = ADDRESSES[net];
   $("modalContent").innerHTML = `
-    <div class="modal-title">Pay ${amt} USDT <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(addr)}"></div>
-    <div class="addr-box"><span>${addr}</span><span class="copy-btn" onclick="navigator.clipboard.writeText('${addr}');toast('Copied!')">COPY</span></div>
-    <button class="btn-buy" style="width:100%;" onclick="submitDeposit(${amt}, '${net}')">I Have Paid</button>
-  `;
-}
-
-async function submitDeposit(amt, net){
-  await window.supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Deposit', amount: amt, network: net, status: 'Pending' }]);
-  closeModal(); toast("Deposit request submitted to Admin.");
-}
-
-function openWithdraw(){
-  if(!currentUser.address) return toast("Please save your withdrawal address in Profile first.");
-  $("modalContent").innerHTML = `
-    <div class="modal-title">Withdraw USDT <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div class="input-box"><input id="wdAmt" type="number" placeholder="Amount"><span>USDT</span></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Saved Address:</div>
-    <div class="addr-box" style="margin-bottom:12px;">${currentUser.address}</div>
-    <button class="btn-sell" style="width:100%;" onclick="openWithdrawOTP()">Request Withdrawal</button>
-  `;
-}
-
-function openWithdrawOTP(){
-  const amt = +$("wdAmt").value;
-  if(!amt || amt<=0) return toast("Enter amount.");
-  if(amt > currentUser.balance) return toast("Insufficient balance.");
-  
-  $("modalContent").innerHTML = `
-    <div class="modal-title">Verify Withdrawal <span class="close-btn" onclick="closeModal()">×</span></div>
-    <div class="warning-box" style="background:rgba(252,213,53,0.1);border-color:rgba(252,213,53,0.3);color:var(--gold);">
-      🔐 For security, enter the 6-digit verification code sent to your email.
+    <div class="modal-header"><div class="modal-title">Send ${amt} USDT (${net})</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <div style="text-align:center; margin-bottom:16px; background:#fff; padding:10px; border-radius:12px; width:fit-content; margin:0 auto 16px;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(addr)}">
     </div>
-    <div class="input-box"><input id="addrVerifyCode" type="text" placeholder="Enter code" maxlength="6" style="text-align:center;font-size:20px;letter-spacing:8px;"></div>
-    <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:12px;">
-      If you did not receive the OTP, please contact customer support.
+    <div style="background:var(--bg); padding:12px; border-radius:8px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:16px; border:1px solid var(--border);">
+      ${addr}
     </div>
-    <button class="btn-sell" style="width:100%;" onclick="confirmWithdrawOTP(${amt})">Submit Request</button>
+    <button class="btn-primary" onclick="submitDepositRequest('${amt}', '${net}')">I Have Paid</button>
   `;
 }
 
-async function confirmWithdrawOTP(amt){
-  const code = $("addrVerifyCode").value.trim();
-  if(!code) return toast("Enter OTP code.");
+async function submitDepositRequest(amt, net) {
+  await supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Deposit', amount: parseFloat(amt), network: net, status: 'Pending' }]);
+  closeModal();
+  toast("Deposit request submitted.");
+}
+
+function openWithdrawModal() {
+  $("modalContent").innerHTML = `
+    <div class="modal-header"><div class="modal-title">Withdraw USDT</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <div class="input-group"><input id="wdAmt" type="number" placeholder="Amount"><span>USDT</span></div>
+    <select id="wdNet" class="auth-input" style="margin-bottom:12px;">
+      <option value="ERC20">ERC-20 (Ethereum)</option>
+      <option value="TRC20">TRC-20 (Tron)</option>
+      <option value="BEP20">BEP-20 (BSC)</option>
+    </select>
+    <input id="wdAddr" class="auth-input" type="text" placeholder="Destination Address" style="margin-bottom:16px;">
+    <button class="btn-danger" onclick="requestWithdrawOTP()">Request Withdrawal</button>
+  `;
+  $("modalOverlay").classList.add("active");
+}
+
+function requestWithdrawOTP() {
+  const amt = parseFloat($("wdAmt").value);
+  const net = $("wdNet").value;
+  const addr = $("wdAddr").value.trim();
+  if (!amt || amt <= 0 || !addr) return toast("Fill all fields.");
+  if (amt > currentUser.balance) return toast("Insufficient balance.");
+
+  window.pendingWithdraw = { amt, net, addr };
   
-  await window.supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Withdraw', amount: amt, network: 'USDT', address: currentUser.address, status: 'Pending' }]);
-  await window.supabaseClient.from('users').update({ withdraw_otp: code }).eq('email', currentUser.email);
+  $("modalContent").innerHTML = `
+    <div class="modal-header"><div class="modal-title">Verify Withdrawal</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <div class="warning-box">🔐 Enter the 6-digit verification code sent to your email.</div>
+    <input id="wdOtp" class="auth-input" type="text" placeholder="Enter OTP" maxlength="6" style="text-align:center; font-size:20px; letter-spacing:8px;">
+    <button class="btn-danger" onclick="confirmWithdraw()">Verify & Submit</button>
+  `;
   
-  closeModal(); toast("Withdrawal requested. Admin will verify and process.");
+  // Send OTP for withdrawal
+  try {
+    fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: "service_oc75guu", template_id: "template_5751mdd", user_id: "54KKOYgNGmL9IAuvh",
+        template_params: { to_email: currentUser.email, otp_code: "123456" } // Demo OTP
+      })
+    });
+    toast("OTP sent to your email (Demo: 123456).");
+  } catch (e) {}
 }
 
-function closeModal(){ $("modalBg").classList.remove("on"); }
-
-/* ================= ADMIN ================= */
-async function renderAdmin(){
-  if(currentUser.role !== 'admin') return;
+async function confirmWithdraw() {
+  const otp = $("wdOtp").value.trim();
+  if (!otp) return toast("Enter OTP.");
   
-  const { data: reqs } = await window.supabaseClient.from('requests').select('*').order('created_at', { ascending: false });
-  const { data: users } = await window.supabaseClient.from('users').select('*');
+  const { amt, net, addr } = window.pendingWithdraw;
+  const newBal = currentUser.balance - amt;
+  
+  await supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
+  await supabaseClient.from('requests').insert([{ user_email: currentUser.email, type: 'Withdraw', amount: amt, network: net, address: addr, status: 'Pending' }]);
+  
+  currentUser.balance = newBal;
+  localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+  
+  closeModal();
+  updateBalanceUI();
+  toast("Withdrawal requested successfully.");
+}
 
-  if(reqs) {
-    $("admRequestsList").innerHTML = reqs.map(r => {
-      if(r.status !== 'Pending') return '';
-      return `<div style="background:#1e2329;padding:12px;border-radius:8px;font-size:12px;margin-bottom:8px;">
-        <div style="color:var(--muted);">${r.user_email} (${r.type})</div>
-        <b>${r.amount} USDT</b> - ${r.address || r.network}
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button onclick="appReq('${r.id}','${r.user_email}','${r.amount}','${r.type}')" style="background:var(--up);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Approve</button>
-          <button onclick="rejReq('${r.id}')" style="background:var(--down);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;">Reject</button>
-        </div>
-      </div>`;
-    }).join('') || "<div style='color:var(--muted);'>No pending requests.</div>";
+function openConvertModal() {
+  $("modalContent").innerHTML = `
+    <div class="modal-header"><div class="modal-title">Convert Crypto</div><div class="close-btn" onclick="closeModal()">×</div></div>
+    <div style="background:var(--bg); padding:16px; border-radius:12px; margin-bottom:12px;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">From</div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:700; font-size:16px;">USDT</span>
+        <input id="cvAmt" type="number" placeholder="0.00" style="text-align:right; font-size:20px; font-weight:700; width:120px; background:none; border:none; color:var(--text-main);" oninput="calcConvert()">
+      </div>
+    </div>
+    <div style="text-align:center; margin:-8px 0; position:relative; z-index:2;">
+      <div style="background:var(--surface); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto; border:1px solid var(--border);">↓</div>
+    </div>
+    <div style="background:var(--bg); padding:16px; border-radius:12px; margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">To</div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <select id="cvCoin" style="font-weight:700; font-size:16px; background:none; border:none; color:var(--text-main);" onchange="calcConvert()">
+          <option value="BTCUSDT">BTC</option>
+          <option value="ETHUSDT">ETH</option>
+          <option value="SOLUSDT">SOL</option>
+        </select>
+        <div id="cvResult" style="font-size:20px; font-weight:700; color:var(--primary);">0.00</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="executeConvert()">Convert</button>
+  `;
+  $("modalOverlay").classList.add("active");
+}
+
+function calcConvert() {
+  const amt = parseFloat($("cvAmt").value) || 0;
+  const pair = $("cvCoin").value;
+  const price = tickerData[pair] ? parseFloat(tickerData[pair].lastPrice) : 1;
+  $("cvResult").textContent = (amt / price).toFixed(6);
+}
+
+async function executeConvert() {
+  const amt = parseFloat($("cvAmt").value);
+  if (!amt || amt <= 0) return toast("Enter amount.");
+  if (amt > currentUser.balance) return toast("Insufficient balance.");
+  
+  const newBal = currentUser.balance - amt;
+  await supabaseClient.from('users').update({ balance: newBal }).eq('email', currentUser.email);
+  
+  currentUser.balance = newBal;
+  localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+  
+  closeModal();
+  updateBalanceUI();
+  toast("Converted successfully!");
+}
+
+/* ================= HISTORY ================= */
+async function renderFullHistory() {
+  const { data: reqs } = await supabaseClient.from('requests').select('*').eq('user_email', currentUser.email).order('created_at', { ascending: false });
+  
+  if (!reqs || reqs.length === 0) {
+    $("fullHistoryList").innerHTML = '<p style="color:var(--text-muted); text-align:center;">No transactions yet.</p>';
+    return;
   }
+  
+  $("fullHistoryList").innerHTML = reqs.map(r => {
+    const color = r.type === "Deposit" ? "var(--up)" : "var(--down)";
+    const sign = r.type === "Deposit" ? "+" : "-";
+    const statusColor = r.status === "Pending" ? "var(--gold)" : r.status === "Approved" ? "var(--up)" : "var(--down)";
+    
+    return `<div style="background:var(--surface); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-weight:600; font-size:15px; margin-bottom:4px;">${r.type}</div>
+        <div style="font-size:12px; color:var(--text-muted);">${new Date(r.created_at).toLocaleString()}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-weight:700; color:${color}; font-size:16px;">${sign}${fmt(r.amount)} USDT</div>
+        <div style="font-size:12px; color:${statusColor}; font-weight:600;">${r.status}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
 
-  if(users) {
-    $("admUsersList").innerHTML = users.map(u => `
-      <div style="background:#1e2329;padding:12px;border-radius:8px;font-size:12px;margin-bottom:8px;">
-        <b>${u.name || 'No Name'}</b> (${u.role})<br>
-        <span style="color:var(--muted);">Email: ${u.email} | Pass: ${u.password || 'Hidden'}</span><br>
-        <span style="color:var(--muted);">Mobile: ${u.mobile || 'N/A'}</span><br>
-        <span style="color:var(--gold);">Balance: ${fmt(u.balance || 0)} USDT</span><br>
-        <span style="color:var(--up);">Withdraw OTP Attempt: ${u.withdraw_otp || 'None'}</span>
-      </div>`).join('');
+/* ================= PROFILE & REFERRAL ================= */
+function renderProfile() {
+  $("profName").textContent = currentUser.name || "User";
+  $("profEmail").textContent = currentUser.email;
+  $("editName").value = currentUser.name || "";
+  $("editMobile").value = currentUser.mobile || "";
+  
+  const refLink = DOMAIN + "/?ref=" + currentUser.id;
+  $("refLinkInput").value = refLink;
+  
+  // Fetch Referral Stats
+  supabaseClient.from('users').select('*', { count: 'exact' }).eq('referred_by', currentUser.id).then(({ count }) => {
+    $("refCount").textContent = count || 0;
+  });
+  $("refCommission").textContent = "0.00 USDT"; // Placeholder for now
+}
+
+function copyRefLink() {
+  const input = $("refLinkInput");
+  input.select();
+  document.execCommand("copy");
+  toast("Referral link copied!");
+}
+
+async function saveProfile() {
+  const name = $("editName").value.trim();
+  const mobile = $("editMobile").value.trim();
+  await supabaseClient.from('users').update({ name, mobile }).eq('email', currentUser.email);
+  
+  currentUser.name = name;
+  currentUser.mobile = mobile;
+  localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+  
+  toast("Profile updated!");
+  renderProfile();
+}
+
+/* ================= ADMIN PANEL ================= */
+async function renderAdmin() {
+  if (currentUser.role !== "admin") return;
+  
+  const { data: reqs } = await supabaseClient.from('requests').select('*').eq('status', 'Pending');
+  $("adminPendingList").innerHTML = (reqs || []).map(r => `
+    <div class="admin-card">
+      <div style="font-size:11px; color:var(--text-muted);">${r.user_email}</div>
+      <b>${r.type}: ${fmt(r.amount)} USDT</b><br>
+      <div style="font-size:11px; margin-top:4px;">${r.address || r.network}</div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button onclick="approveReq('${r.id}', '${r.user_email}', ${r.amount}, '${r.type}')" style="background:var(--up); color:#000; padding:6px 12px; border-radius:6px; font-weight:700;">Approve</button>
+        <button onclick="rejectReq('${r.id}')" style="background:var(--down); color:#fff; padding:6px 12px; border-radius:6px; font-weight:700;">Reject</button>
+      </div>
+    </div>
+  `).join("") || '<p style="color:var(--text-muted); text-align:center;">No pending requests.</p>';
+
+  const { data: users } = await supabaseClient.from('users').select('*');
+  $("adminUsersList").innerHTML = (users || []).map(u => `
+    <div class="admin-card">
+      <b>${u.name || 'No Name'}</b> <span style="color:var(--text-muted); font-size:11px;">(${u.role})</span><br>
+      Email: ${u.email}<br>
+      Pass: ${u.password}<br>
+      Mobile: ${u.mobile || 'N/A'}<br>
+      Balance: <span style="color:var(--gold);">${fmt(u.balance)} USDT</span><br>
+      Ref By: ${u.referred_by || 'None'}
+    </div>
+  `).join("");
+}
+
+async function approveReq(id, email, amt, type) {
+  await supabaseClient.from('requests').update({ status: 'Approved' }).eq('id', id);
+  if (type === 'Deposit') {
+    const { data: u } = await supabaseClient.from('users').select('balance').eq('email', email).single();
+    if (u) {
+      const newBal = parseFloat(u.balance) + parseFloat(amt);
+      await supabaseClient.from('users').update({ balance: newBal }).eq('email', email);
+      if (email === currentUser.email) {
+        currentUser.balance = newBal;
+        localStorage.setItem("cryptonest_session", JSON.stringify(currentUser));
+        updateBalanceUI();
+      }
+    }
   }
+  toast("Request approved.");
+  renderAdmin();
 }
 
-async function appReq(id, email, amt, type){
-  await window.supabaseClient.from('requests').update({ status: 'Approved' }).eq('id', id);
-  if(type === 'Deposit') {
-    const { data: u } = await window.supabaseClient.from('users').select('balance').eq('email', email).single();
-    if(u) await window.supabaseClient.from('users').update({ balance: u.balance + parseFloat(amt) }).eq('email', email);
-  }
-  toast("Request Approved"); renderAdmin();
+async function rejectReq(id) {
+  await supabaseClient.from('requests').update({ status: 'Rejected' }).eq('id', id);
+  toast("Request rejected.");
+  renderAdmin();
 }
 
-async function rejReq(id){
-  await window.supabaseClient.from('requests').update({ status: 'Rejected' }).eq('id', id);
-  toast("Request Rejected"); renderAdmin();
-}
-
-/* ================= AI SUPPORT ================= */
-function toggleChat(){
-  const c = $("chatBox");
-  if(c.classList.contains("on")) c.classList.remove("on");
-  else { c.classList.add("on"); }
-}
-function sendChat(){
-  const input = $("chatInput").value.trim(); if(!input) return;
-  const body = $("chatBody");
-  body.innerHTML += `<div class="chat-msg me">${input}</div>`; $("chatInput").value = "";
-  setTimeout(()=>{ body.innerHTML += `<div class="chat-msg">Please contact human support on Telegram.</div><a href="${TELEGRAM_LINK}" target="_blank" class="btn-wa">Chat on Telegram</a>`; body.scrollTop = body.scrollHeight; }, 1000);
-}
-
+/* ================= INIT ================= */
+document.addEventListener("DOMContentLoaded", () => {
+  checkSession();
+});
 </script>
 </body>
 </html>
